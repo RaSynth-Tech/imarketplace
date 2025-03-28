@@ -15,7 +15,7 @@ import Cart from './pages/Cart';
 import Payment from './components/Payment';
 import SellerRegistration from './components/SellerRegistration';
 import ProductDetails from './pages/ProductDetails';
-import Login from './components/Login';
+import LoginPage from './pages/Login';
 import Register from './components/Register';
 import SellerDashboard from './pages/SellerDashboard';
 import Box from '@mui/material/Box';
@@ -103,7 +103,7 @@ function AppContent() {
                 <Route path="/products/:id" element={<ProductDetails />} />
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/payment" element={<Payment />} />
-                <Route path="/login" element={<Login />} />
+                <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<Register />} />
                 <Route
                   path="/seller/register"
