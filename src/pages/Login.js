@@ -1,20 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-import {
-  Container,
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Alert,
-  Paper,
-  Divider,
-} from '@mui/material';
-import GoogleIcon from '@mui/icons-material/Google';
 import { useAuth } from '../context/AuthContext';
+import Login from '../components/Login';
 
-function Login() {
+function LoginPage() {
   const navigate = useNavigate();
   const { login, googleLogin } = useAuth();
   const [email, setEmail] = useState('');
@@ -71,62 +60,15 @@ function Login() {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 12, mb: 8 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom align="center">
-          Login
-        </Typography>
-        <Typography variant="body1" color="text.secondary" align="center" paragraph>
-          For demo purposes, use:
-          <br />
-          abc@gmail.com for customer access
-          <br />
-          cde@gmail.com for seller access
-        </Typography>
-        {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {error}
-          </Alert>
-        )}
-        <Box component="form" onSubmit={handleSubmit} noValidate>
-          <TextField
-            fullWidth
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            margin="normal"
-            required
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            size="large"
-            sx={{ mt: 3 }}
-          >
-            Login
-          </Button>
-        </Box>
-        <Box sx={{ mt: 3 }}>
-          <Divider sx={{ mb: 2 }}>OR</Divider>
-          <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              useOneTap
-              theme="filled_blue"
-              size="large"
-              width="100%"
-              text="continue_with"
-              shape="rectangular"
-              logo_alignment="left"
-            />
-          </GoogleOAuthProvider>
-        </Box>
-      </Paper>
-    </Container>
+    <Login 
+      email={email}
+      setEmail={setEmail}
+      error={error}
+      onSubmit={handleSubmit}
+      onGoogleSuccess={handleGoogleSuccess}
+      onGoogleError={handleGoogleError}
+    />
   );
 }
 
-export default Login; 
+export default LoginPage; 

@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import GoogleLoginButton from './GoogleLoginButton';
 
 function Login() {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ function Login() {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 12 }}>
+    <Container maxWidth="sm" sx={{ mt: 12, mb: 8 }}>
       <Paper elevation={3} sx={{ p: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom align="center">
           Login
@@ -61,7 +62,7 @@ function Login() {
             {error}
           </Alert>
         )}
-        <form onSubmit={handleSubmit}>
+        <Box component="form" onSubmit={handleSubmit} noValidate>
           <TextField
             fullWidth
             label="Email"
@@ -92,7 +93,15 @@ function Login() {
           >
             {loading ? 'Logging in...' : 'Login'}
           </Button>
-        </form>
+        </Box>
+        <GoogleLoginButton 
+          onSuccess={(credential) => {
+            // Handle Google login success
+          }}
+          onError={(error) => {
+            // Handle Google login error
+          }}
+        />
         <Box sx={{ mt: 2, textAlign: 'center' }}>
           <Typography variant="body2">
             Don't have an account?{' '}
