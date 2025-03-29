@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -13,63 +13,58 @@ import {
   IconButton,
   Snackbar,
   Alert,
+  Stack,
+  useTheme,
+  Tabs,
+  Tab,
+  Chip,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useCart } from '../context/CartContext';
+import Avatar from '@mui/material/Avatar';
+import VerifiedIcon from '@mui/icons-material/Verified';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import PhoneIcon from '@mui/icons-material/Phone';
+import EmailIcon from '@mui/icons-material/Email';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import SecurityIcon from '@mui/icons-material/Security';
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import StarIcon from '@mui/icons-material/Star';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 
-// Sample reviews data
-const reviews = [
-  {
-    id: 1,
-    author: 'Sarah Johnson',
-    rating: 5,
-    date: '2024-02-15',
-    comment: 'Absolutely love this product! The quality is amazing and it looks exactly like the pictures.',
-  },
-  {
-    id: 2,
-    author: 'Michael Chen',
-    rating: 4,
-    date: '2024-02-10',
-    comment: 'Great product overall, but shipping took a bit longer than expected.',
-  },
-  {
-    id: 3,
-    author: 'Emma Wilson',
-    rating: 5,
-    date: '2024-02-05',
-    comment: 'Perfect addition to my collection. Will definitely buy again!',
-  },
-];
+// Import products data
+import { products } from './Products';
 
 function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const theme = useTheme();
   const [quantity, setQuantity] = useState(1);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
+  const [tabValue, setTabValue] = useState(0);
+  const [product, setProduct] = useState(null);
+  const [selectedImage, setSelectedImage] = useState('');
 
-  // In a real app, you would fetch the product data from an API
-  // For now, we'll use sample data
-  const product = {
-    id: parseInt(id),
-    title: 'Floral Summer Dress',
-    price: 89.99,
-    description: 'A beautiful floral summer dress made from lightweight, breathable fabric. Perfect for warm weather occasions.',
-    image: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    category: 'Dresses',
-    subcategory: 'Summer',
-    specifications: {
-      material: '100% Cotton',
-      care: 'Machine washable',
-      fit: 'Regular fit',
-      length: 'Knee length',
-    },
-    reviews: reviews,
-  };
+  useEffect(() => {
+    const foundProduct = products.find(p => p.id === parseInt(id));
+    if (!foundProduct) {
+      navigate('/products');
+      return;
+    }
+    setProduct(foundProduct);
+    setSelectedImage(foundProduct.image);
+  }, [id, navigate]);
 
-  const averageRating = product.reviews.reduce((acc, review) => acc + review.rating, 0) / product.reviews.length;
+  if (!product) {
+    return null;
+  }
 
   const handleAddToCart = () => {
     addToCart({ ...product, quantity });
@@ -83,55 +78,165 @@ function ProductDetails() {
     setSnackbar({ ...snackbar, open: false });
   };
 
+  const handleSellerClick = () => {
+    navigate(`/seller/${product.seller.id}`);
+  };
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
+  // Get related products (excluding current product)
+  const relatedProducts = products
+    .filter(p => p.id !== product.id && p.category === product.category)
+    .slice(0, 3);
+
   return (
-    <Container>
-      <Box sx={{ py: 4 }}>
-        <IconButton onClick={() => navigate(-1)} sx={{ mb: 2 }}>
-          <ArrowBackIcon />
-        </IconButton>
-
-        <Grid container spacing={4}>
-          <Grid item xs={12} md={6}>
-            <img
-              src={product.image}
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Grid container spacing={4}>
+        {/* Product Images */}
+        <Grid item xs={12} md={6}>
+          <Paper 
+            elevation={0} 
+            sx={{ 
+              p: 2, 
+              borderRadius: 2,
+              bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)',
+            }}
+          >
+            <Box
+              component="img"
+              src={selectedImage}
               alt={product.title}
-              style={{ width: '100%', height: 'auto', borderRadius: '8px' }}
+              sx={{
+                width: '100%',
+                height: 'auto',
+                borderRadius: 1,
+                mb: 2,
+              }}
             />
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <Typography variant="h4" gutterBottom>
-              {product.title}
-            </Typography>
-            <Typography variant="h5" color="primary" gutterBottom>
-              ${product.price.toFixed(2)}
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <Rating value={averageRating} precision={0.5} readOnly />
-              <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-                ({product.reviews.length} reviews)
-              </Typography>
-            </Box>
-            <Typography variant="body1" paragraph>
-              {product.description}
-            </Typography>
-
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="subtitle1" gutterBottom>
-                Specifications
-              </Typography>
-              <Grid container spacing={2}>
-                {Object.entries(product.specifications).map(([key, value]) => (
-                  <Grid item xs={6} key={key}>
-                    <Typography variant="body2" color="text.secondary">
-                      {key.charAt(0).toUpperCase() + key.slice(1)}:
-                    </Typography>
-                    <Typography variant="body2">{value}</Typography>
-                  </Grid>
-                ))}
+            <Grid container spacing={1}>
+              <Grid item xs={3}>
+                <Box
+                  component="img"
+                  src={product.image}
+                  alt={product.title}
+                  sx={{
+                    width: '100%',
+                    height: 'auto',
+                    borderRadius: 1,
+                    cursor: 'pointer',
+                    border: selectedImage === product.image ? `2px solid ${theme.palette.primary.main}` : 'none',
+                    '&:hover': {
+                      opacity: 0.8,
+                    },
+                  }}
+                  onClick={() => setSelectedImage(product.image)}
+                />
               </Grid>
+            </Grid>
+          </Paper>
+        </Grid>
+
+        {/* Product Info */}
+        <Grid item xs={12} md={6}>
+          <Stack spacing={3}>
+            <Box>
+              <Typography variant="h4" component="h1" gutterBottom>
+                {product.title}
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                <Typography variant="h5" sx={{ fontWeight: 600, color: '#000' }}>
+                  ₹{product.price.toLocaleString('en-IN')}
+                </Typography>
+                {product.originalPrice && (
+                  <>
+                    <Typography variant="h6" color="text.secondary" sx={{ textDecoration: 'line-through' }}>
+                      ₹{product.originalPrice.toLocaleString('en-IN')}
+                    </Typography>
+                    <Chip 
+                      label={`${product.discount}% OFF`}
+                      color="error"
+                      size="small"
+                    />
+                  </>
+                )}
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                <Rating value={product.seller.rating} readOnly precision={0.1} />
+                <Typography variant="body2" color="text.secondary">
+                  ({product.seller.rating} rating)
+                </Typography>
+              </Box>
             </Box>
 
+            {/* Seller Information */}
+            <Paper 
+              elevation={0}
+              sx={{ 
+                p: 2, 
+                borderRadius: 2,
+                bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)',
+                cursor: 'pointer',
+                '&:hover': {
+                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
+                },
+              }}
+              onClick={handleSellerClick}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Avatar
+                  src={product.seller.profilePhoto}
+                  sx={{ width: 64, height: 64 }}
+                />
+                <Box sx={{ flex: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                      {product.seller.name}
+                    </Typography>
+                    {product.seller.verified && (
+                      <VerifiedIcon sx={{ color: '#000' }} />
+                    )}
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                    <Rating value={product.seller.rating} readOnly size="small" precision={0.1} />
+                    <Typography variant="body2" color="text.secondary">
+                      ({product.seller.rating})
+                    </Typography>
+                  </Box>
+                  {product.seller.businessDetails && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <LocationOnIcon color="action" fontSize="small" />
+                      <Typography variant="body2" color="text.secondary">
+                        {product.seller.businessDetails.address}
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
+              </Box>
+            </Paper>
+
+            {/* Features */}
+            <Paper sx={{ p: 2 }}>
+              <List>
+                {[
+                  'Free shipping on orders above ₹4999',
+                  '7 days easy returns',
+                  'Secure payment options',
+                  '24/7 customer support',
+                  'Genuine product guarantee',
+                ].map((feature, index) => (
+                  <ListItem key={index}>
+                    <ListItemIcon>
+                      <CheckCircleIcon color="success" />
+                    </ListItemIcon>
+                    <ListItemText primary={feature} />
+                  </ListItem>
+                ))}
+              </List>
+            </Paper>
+
+            {/* Add to Cart Button */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
               <TextField
                 type="number"
@@ -146,45 +251,127 @@ function ProductDetails() {
                 size="large"
                 startIcon={<ShoppingCartIcon />}
                 onClick={handleAddToCart}
-                fullWidth
+                sx={{ mt: 2 }}
               >
                 Add to Cart
               </Button>
             </Box>
-          </Grid>
+          </Stack>
         </Grid>
+      </Grid>
 
-        <Box sx={{ mt: 6 }}>
-          <Typography variant="h5" gutterBottom>
-            Customer Reviews
-          </Typography>
-          <Divider sx={{ mb: 3 }} />
-          {product.reviews.map((review) => (
-            <Paper key={review.id} sx={{ p: 2, mb: 2 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography variant="subtitle1">{review.author}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {new Date(review.date).toLocaleDateString()}
-                </Typography>
-              </Box>
-              <Rating value={review.rating} readOnly size="small" />
-              <Typography variant="body1" sx={{ mt: 1 }}>
-                {review.comment}
-              </Typography>
-            </Paper>
-          ))}
+      {/* Tabs Section */}
+      <Box sx={{ mt: 4 }}>
+        <Tabs value={tabValue} onChange={handleTabChange}>
+          <Tab label="Description" />
+          <Tab label="Specifications" />
+          <Tab label="Reviews" />
+          <Tab label="Related Products" />
+        </Tabs>
+
+        <Box sx={{ mt: 2 }}>
+          {tabValue === 0 && (
+            <Typography variant="body1" color="text.secondary">
+              {product.description}
+            </Typography>
+          )}
+
+          {tabValue === 1 && (
+            <Grid container spacing={2}>
+              {Object.entries(product.specifications || {}).map(([key, value]) => (
+                <Grid item xs={6} key={key}>
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    <Typography variant="body2" color="text.secondary">
+                      {key.charAt(0).toUpperCase() + key.slice(1)}:
+                    </Typography>
+                    <Typography variant="body2">{value}</Typography>
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
+          )}
+
+          {tabValue === 2 && (
+            <Stack spacing={3}>
+              {product.reviews?.map((review) => (
+                <Paper key={review.id} sx={{ p: 2 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                        {review.author}
+                      </Typography>
+                      {review.verified && (
+                        <VerifiedIcon sx={{ fontSize: 16, color: '#000' }} />
+                      )}
+                    </Box>
+                    <Typography variant="body2" color="text.secondary">
+                      {new Date(review.date).toLocaleDateString()}
+                    </Typography>
+                  </Box>
+                  <Rating value={review.rating} readOnly size="small" />
+                  <Typography variant="body2" sx={{ mt: 1 }}>
+                    {review.comment}
+                  </Typography>
+                </Paper>
+              ))}
+            </Stack>
+          )}
+
+          {tabValue === 3 && (
+            <Grid container spacing={3}>
+              {relatedProducts.map((relatedProduct) => (
+                <Grid item xs={12} sm={6} md={4} key={relatedProduct.id}>
+                  <Paper
+                    sx={{
+                      p: 2,
+                      cursor: 'pointer',
+                      '&:hover': {
+                        boxShadow: 3,
+                      },
+                    }}
+                    onClick={() => navigate(`/products/${relatedProduct.id}`)}
+                  >
+                    <Box
+                      component="img"
+                      src={relatedProduct.image}
+                      alt={relatedProduct.title}
+                      sx={{
+                        width: '100%',
+                        height: 200,
+                        objectFit: 'cover',
+                        borderRadius: 1,
+                        mb: 2,
+                      }}
+                    />
+                    <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                      {relatedProduct.title}
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                      <Rating value={relatedProduct.seller.rating} readOnly size="small" />
+                      <Typography variant="body2" color="text.secondary">
+                        ({relatedProduct.seller.rating})
+                      </Typography>
+                    </Box>
+                    <Typography variant="h6" sx={{ color: '#000' }}>
+                      ₹{relatedProduct.price.toLocaleString('en-IN')}
+                    </Typography>
+                  </Paper>
+                </Grid>
+              ))}
+            </Grid>
+          )}
         </Box>
-
-        <Snackbar
-          open={snackbar.open}
-          autoHideDuration={3000}
-          onClose={handleCloseSnackbar}
-        >
-          <Alert onClose={handleCloseSnackbar} severity="success">
-            {snackbar.message}
-          </Alert>
-        </Snackbar>
       </Box>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success">
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

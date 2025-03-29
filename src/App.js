@@ -17,9 +17,13 @@ import SellerRegistration from './components/SellerRegistration';
 import ProductDetails from './pages/ProductDetails';
 import Login from './components/Login';
 import Register from './components/Register';
-import SellerDashboard from './pages/SellerDashboard';
 import Box from '@mui/material/Box';
 import Profile from './pages/Profile';
+import SellerProfile from './pages/SellerProfile';
+import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminSellerDashboard from './pages/AdminSellerDashboard';
+import SellerDashboard from './pages/Dashboard';
 
 // Initialize Stripe
 const stripePromise = loadStripe('your_publishable_key');
@@ -113,15 +117,13 @@ function AppContent() {
                     </ProtectedRoute>
                   }
                 />
-                <Route
-                  path="/seller/dashboard"
-                  element={
-                    <ProtectedRoute requireSeller>
-                      <SellerDashboard />
-                    </ProtectedRoute>
-                  }
-                />
+               
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/seller/:sellerId" element={<SellerProfile />} />
+                <Route path="/dashboard" element={<SellerDashboard />} />
+                <Route path="/my-products" element={<Products />} />
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/admin/seller/:sellerId/dashboard" element={<AdminSellerDashboard />} />
               </Routes>
             </Box>
             {shouldShowFooter && <Footer />}
