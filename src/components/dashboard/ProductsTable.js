@@ -472,6 +472,7 @@ const ProductsTable = ({ products, onAddProduct, onEditProduct, onDeleteProduct 
                       <Box sx={{ display: 'flex', gap: 1 }}>
                         <IconButton 
                           onClick={(e) => handleEditClick(e, product.id)}
+                          size="small"
                           sx={{
                             color: '#000000',
                             opacity: 0.8,
@@ -480,6 +481,9 @@ const ProductsTable = ({ products, onAddProduct, onEditProduct, onDeleteProduct 
                               opacity: 1,
                               bgcolor: 'rgba(0, 0, 0, 0.04)',
                               transform: 'scale(1.1)',
+                            },
+                            '& .MuiSvgIcon-root': {
+                              fontSize: '1.2rem',
                             },
                           }}
                         >
@@ -487,6 +491,7 @@ const ProductsTable = ({ products, onAddProduct, onEditProduct, onDeleteProduct 
                         </IconButton>
                         <IconButton 
                           onClick={(e) => handleDeleteClick(e, product.id)}
+                          size="small"
                           sx={{
                             color: '#000000',
                             opacity: 0.8,
@@ -496,12 +501,16 @@ const ProductsTable = ({ products, onAddProduct, onEditProduct, onDeleteProduct 
                               bgcolor: 'rgba(0, 0, 0, 0.04)',
                               transform: 'scale(1.1)',
                             },
+                            '& .MuiSvgIcon-root': {
+                              fontSize: '1.2rem',
+                            },
                           }}
                         >
                           <DeleteIcon />
                         </IconButton>
                         <IconButton
                           onClick={(e) => handleAccordionClick(e, product.id)}
+                          size="small"
                           sx={{
                             color: '#000000',
                             opacity: 0.8,
@@ -510,6 +519,9 @@ const ProductsTable = ({ products, onAddProduct, onEditProduct, onDeleteProduct 
                               opacity: 1,
                               bgcolor: 'rgba(0, 0, 0, 0.04)',
                               transform: 'scale(1.1)',
+                            },
+                            '& .MuiSvgIcon-root': {
+                              fontSize: '1.2rem',
                             },
                           }}
                         >
@@ -555,8 +567,8 @@ const ProductsTable = ({ products, onAddProduct, onEditProduct, onDeleteProduct 
                                 bgcolor: 'white',
                                 borderRadius: 1,
                                 boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                                border: '1px solid',
-                                borderColor: 'divider',
+                                // border: '1px solid',
+                                // borderColor: 'divider',
                                 mb: 2,
                               }}>
                                 <Box sx={{ flex: 1 }}>
@@ -748,7 +760,12 @@ const ProductsTable = ({ products, onAddProduct, onEditProduct, onDeleteProduct 
                                     <IconButton
                                       size="small"
                                       onClick={() => setEditingColors(product.id)}
-                                      sx={{ color: '#000000' }}
+                                      sx={{ 
+                                        color: '#000000',
+                                        '& .MuiSvgIcon-root': {
+                                          fontSize: '1.2rem',
+                                        },
+                                      }}
                                     >
                                       <EditIcon />
                                     </IconButton>
@@ -878,7 +895,12 @@ const ProductsTable = ({ products, onAddProduct, onEditProduct, onDeleteProduct 
                                     <IconButton
                                       size="small"
                                       onClick={() => setEditingColors(product.id)}
-                                      sx={{ color: '#000000' }}
+                                      sx={{ 
+                                        color: '#000000',
+                                        '& .MuiSvgIcon-root': {
+                                          fontSize: '1.2rem',
+                                        },
+                                      }}
                                     >
                                       <EditIcon />
                                     </IconButton>
@@ -969,7 +991,12 @@ const ProductsTable = ({ products, onAddProduct, onEditProduct, onDeleteProduct 
                                     <IconButton
                                       size="small"
                                       onClick={() => setEditingSpecs(product.id)}
-                                      sx={{ color: '#000000' }}
+                                      sx={{ 
+                                        color: '#000000',
+                                        '& .MuiSvgIcon-root': {
+                                          fontSize: '1.2rem',
+                                        },
+                                      }}
                                     >
                                       <EditIcon />
                                     </IconButton>

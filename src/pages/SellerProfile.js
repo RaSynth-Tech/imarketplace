@@ -491,11 +491,20 @@ function SellerProfile() {
               </Card>
             </Grid>
           ))}
+          
         </Grid>
+        <div style={{marginTop:8}}>
+        <Button
+            variant="contained"
+            onClick={() => navigate(`/seller/${sellerId}/products`)}
+          >
+            View All Products
+          </Button></div>
+        
       </Paper>
 
       {/* Action Buttons */}
-      <Box sx={{ display: 'flex', gap: 2, mt: 4 }}>
+      {/* <Box sx={{ display: 'flex', gap: 2, mt: 4 }}>
         {user?.id === parseInt(sellerId) ? (
           <>
             <Button
@@ -519,7 +528,7 @@ function SellerProfile() {
             View All Products
           </Button>
         )}
-      </Box>
+      </Box> */}
     </Container>
   );
 }

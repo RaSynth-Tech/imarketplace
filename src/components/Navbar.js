@@ -88,6 +88,7 @@ function Navbar({ isDarkMode, toggleTheme }) {
               color="inherit"
               component={RouterLink}
               to="/products"
+              startIcon={<InventoryIcon />}
               sx={{ 
                 color: '#000',
                 '&:hover': {
@@ -103,6 +104,7 @@ function Navbar({ isDarkMode, toggleTheme }) {
                   <Button
                     color="inherit"
                     component={RouterLink}
+                    
                     to="/admin/dashboard"
                     startIcon={<DashboardIcon sx={{ color: '#000' }} />}
                     sx={{ 
@@ -131,7 +133,7 @@ function Navbar({ isDarkMode, toggleTheme }) {
                     >
                       Dashboard
                     </Button>
-                    <Button
+                    {/* <Button
                       color="inherit"
                       component={RouterLink}
                       to="/my-products"
@@ -144,7 +146,7 @@ function Navbar({ isDarkMode, toggleTheme }) {
                       }}
                     >
                       My Products
-                    </Button>
+                    </Button> */}
                   </>
                 )}
                 <IconButton
