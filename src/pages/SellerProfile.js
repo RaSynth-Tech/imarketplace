@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container,
@@ -21,6 +21,7 @@ import {
 } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 import { products } from './Products';
+import { sellers } from '../data/sellers';
 import { Link } from 'react-router-dom';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -38,20 +39,30 @@ function SellerProfile() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const theme = useTheme();
+  const [activeTab, setActiveTab] = useState(0);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editedSeller, setEditedSeller] = useState(null);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
-  // Get seller details from products
-  const sellerProducts = products.filter(product => product.seller.id === parseInt(sellerId));
-  const seller = sellerProducts[0]?.seller;
+  // Find the seller with null check
+  const seller = sellers.find(s => s?.id === parseInt(sellerId)) || {
+    id: parseInt(sellerId),
+    name: 'Unknown Seller',
+    profilePhoto: '',
+    rating: 0,
+    verified: false,
+    businessDetails: {
+      name: 'Unknown Business',
+      address: 'Not Available',
+      phone: 'Not Available',
+      email: 'Not Available',
+    }
+  };
 
-  if (!seller) {
-    return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Typography variant="h5" color="error">
-          Seller not found
-        </Typography>
-      </Container>
-    );
-  }
+  // Filter products with null check
+  const sellerProducts = products.filter(product => 
+    product?.sellerId === parseInt(sellerId)
+  );
 
   // Calculate seller statistics
   const totalProducts = sellerProducts.length;
@@ -68,6 +79,32 @@ function SellerProfile() {
   const recentProducts = [...sellerProducts]
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 3);
+
+  const handleEditClick = () => {
+    setEditedSeller({
+      ...seller,
+      businessDetails: { ...seller.businessDetails }
+    });
+    setShowEditDialog(true);
+  };
+
+  const handleSaveEdit = () => {
+    // Here you would typically make an API call to save the changes
+    setShowEditDialog(false);
+    setSnackbar({
+      open: true,
+      message: 'Seller information updated successfully',
+      severity: 'success'
+    });
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
   Container,
@@ -37,33 +37,41 @@ import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import StarIcon from '@mui/icons-material/Star';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-
-// Import products data
-import { products } from './Products';
+import {
+  ShoppingCart as CartIcon,
+  Favorite as FavoriteIcon,
+  Share as ShareIcon,
+} from '@mui/icons-material';
 
 function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { addToCart } = useCart();
   const theme = useTheme();
   const [quantity, setQuantity] = useState(1);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
   const [tabValue, setTabValue] = useState(0);
-  const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState('');
 
-  useEffect(() => {
-    const foundProduct = products.find(p => p.id === parseInt(id));
-    if (!foundProduct) {
-      navigate('/products');
-      return;
+  // Get product from navigation state
+  const product = location.state?.product;
+
+  // Set initial selected image
+  React.useEffect(() => {
+    if (product?.image) {
+      setSelectedImage(product.image);
     }
-    setProduct(foundProduct);
-    setSelectedImage(foundProduct.image);
-  }, [id, navigate]);
+  }, [product?.image]);
 
   if (!product) {
-    return null;
+    return (
+      <Container>
+        <Typography variant="h5" sx={{ mt: 4, textAlign: 'center' }}>
+          Product not found
+        </Typography>
+      </Container>
+    );
   }
 
   const handleAddToCart = () => {
@@ -85,11 +93,6 @@ function ProductDetails() {
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
-
-  // Get related products (excluding current product)
-  const relatedProducts = products
-    .filter(p => p.id !== product.id && p.category === product.category)
-    .slice(0, 3);
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -163,9 +166,9 @@ function ProductDetails() {
                 )}
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                <Rating value={product.seller.rating} readOnly precision={0.1} />
+                <Rating value={product.seller?.rating || 0} readOnly precision={0.1} />
                 <Typography variant="body2" color="text.secondary">
-                  ({product.seller.rating} rating)
+                  ({product.seller?.rating || 0} rating)
                 </Typography>
               </Box>
             </Box>
@@ -186,25 +189,25 @@ function ProductDetails() {
             >
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 <Avatar
-                  src={product.seller.profilePhoto}
+                  src={product.seller?.profilePhoto}
                   sx={{ width: 64, height: 64 }}
                 />
                 <Box sx={{ flex: 1 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
                     <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                      {product.seller.name}
+                      {product.seller?.name || 'Unknown Seller'}
                     </Typography>
-                    {product.seller.verified && (
+                    {product.seller?.verified && (
                       <VerifiedIcon sx={{ color: '#000' }} />
                     )}
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                    <Rating value={product.seller.rating} readOnly size="small" precision={0.1} />
+                    <Rating value={product.seller?.rating || 0} readOnly size="small" precision={0.1} />
                     <Typography variant="body2" color="text.secondary">
-                      ({product.seller.rating})
+                      ({product.seller?.rating || 0})
                     </Typography>
                   </Box>
-                  {product.seller.businessDetails && (
+                  {product.seller?.businessDetails && (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <LocationOnIcon color="action" fontSize="small" />
                       <Typography variant="body2" color="text.secondary">
@@ -249,7 +252,7 @@ function ProductDetails() {
               <Button
                 variant="contained"
                 size="large"
-                startIcon={<ShoppingCartIcon />}
+                startIcon={<CartIcon />}
                 onClick={handleAddToCart}
                 sx={{ mt: 2 }}
               >
@@ -266,7 +269,6 @@ function ProductDetails() {
           <Tab label="Description" />
           <Tab label="Specifications" />
           <Tab label="Reviews" />
-          <Tab label="Related Products" />
         </Tabs>
 
         <Box sx={{ mt: 2 }}>
@@ -315,50 +317,6 @@ function ProductDetails() {
                 </Paper>
               ))}
             </Stack>
-          )}
-
-          {tabValue === 3 && (
-            <Grid container spacing={3}>
-              {relatedProducts.map((relatedProduct) => (
-                <Grid item xs={12} sm={6} md={4} key={relatedProduct.id}>
-                  <Paper
-                    sx={{
-                      p: 2,
-                      cursor: 'pointer',
-                      '&:hover': {
-                        boxShadow: 3,
-                      },
-                    }}
-                    onClick={() => navigate(`/products/${relatedProduct.id}`)}
-                  >
-                    <Box
-                      component="img"
-                      src={relatedProduct.image}
-                      alt={relatedProduct.title}
-                      sx={{
-                        width: '100%',
-                        height: 200,
-                        objectFit: 'cover',
-                        borderRadius: 1,
-                        mb: 2,
-                      }}
-                    />
-                    <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                      {relatedProduct.title}
-                    </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                      <Rating value={relatedProduct.seller.rating} readOnly size="small" />
-                      <Typography variant="body2" color="text.secondary">
-                        ({relatedProduct.seller.rating})
-                      </Typography>
-                    </Box>
-                    <Typography variant="h6" sx={{ color: '#000' }}>
-                      ₹{relatedProduct.price.toLocaleString('en-IN')}
-                    </Typography>
-                  </Paper>
-                </Grid>
-              ))}
-            </Grid>
           )}
         </Box>
       </Box>

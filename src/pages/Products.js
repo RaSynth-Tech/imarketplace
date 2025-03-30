@@ -20,12 +20,14 @@ import {
   Alert,
   IconButton,
   useTheme,
+  Chip,
 } from '@mui/material';
 import { useCart } from '../context/CartContext';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Avatar from '@mui/material/Avatar';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import Rating from '@mui/material/Rating';
+import { sellers } from '../data/sellers';
 
 const categories = {
   'Dresses': ['Summer Dresses', 'Evening Dresses', 'Casual Dresses', 'Formal Dresses'],
@@ -35,218 +37,221 @@ const categories = {
   'Outerwear': ['Jackets', 'Coats', 'Blazers', 'Cardigans'],
 };
 
+// Helper function to get seller by ID with fallback
+const getSellerById = (sellerId) => {
+  const seller = sellers.find(seller => seller.id === sellerId);
+  return seller || {
+    id: sellerId,
+    name: 'Unknown Seller',
+    profilePhoto: '',
+    rating: 0,
+    verified: false,
+    businessDetails: {
+      name: 'Unknown Business',
+      address: 'Not Available',
+      phone: 'Not Available',
+      email: 'Not Available',
+    }
+  };
+};
+
 export const products = [
   // Jane's Products (Fashion Boutique)
   {
     id: 1,
-    title: 'Floral Summer Dress',
-    price: 89.99 * 83,
-    image: 'https://images.unsplash.com/photo-1612336307429-8a898d10e223?w=800&auto=format&fit=crop&q=60',
-    description: 'Beautiful floral print summer dress perfect for warm days',
-    category: 'Dresses',
-    subcategory: 'Summer Dresses',
-    seller: {
-      id: 2,
-      name: 'Jane Seller',
-      profilePhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60',
-      rating: 4.8,
-      verified: true,
-      businessDetails: {
-        name: 'Fashion Boutique',
-        description: 'Premium Indian fashion and accessories. We specialize in traditional and contemporary designs, offering the best quality products at competitive prices. Our collection includes ethnic wear, fusion wear, and designer accessories.',
-        address: 'Shop No. 45, Phoenix Market City, Kurla West, Mumbai - 400070',
-        phone: '+91 98765 43210',
-        established: '2020',
-        totalSales: 1500000,
-        totalProducts: 45,
-        rating: 4.8,
-        businessHours: '10:00 AM - 9:00 PM',
-        specialties: ['Ethnic Wear', 'Fusion Fashion', 'Designer Accessories'],
-        paymentMethods: ['UPI', 'Cards', 'Cash'],
-        shipping: 'Pan India Delivery'
-      }
+    title: 'Classic White Shirt',
+    subcategory: 'Casual Shirts',
+    category: 'Shirts',
+    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+    price: 1999,
+    cost: 1200,
+    sale: 1599,
+    discount: 20,
+    stock: 25,
+    sellerId: 1,
+    colors: ['#000000', '#FFFFFF', '#4169E1'],
+    sizes: ['S', 'M', 'L', 'XL'],
+    specifications: {
+      'Material': '100% Cotton',
+      'Care Instructions': 'Machine wash cold',
+      'Fit': 'Regular Fit',
+      'Collar': 'Classic Point Collar',
+      'Cuff': 'Button Cuff'
     },
+    reviews: [
+      {
+        id: 1,
+        author: 'Sarah Johnson',
+        rating: 4.5,
+        comment: 'Beautiful dress, perfect for summer!',
+        date: '2024-02-15',
+        verified: true,
+      },
+    ],
   },
   {
     id: 2,
     title: 'Elegant Evening Gown',
-    price: 199.99 * 83,
-    image: 'https://images.unsplash.com/photo-1591369822096-ffd140ec948f?w=800&auto=format&fit=crop&q=60',
-    description: 'Stunning evening gown for special occasions',
-    category: 'Dresses',
     subcategory: 'Evening Dresses',
-    seller: {
-      id: 2,
-      name: 'Jane Seller',
-      profilePhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60',
-      rating: 4.8,
-      verified: true,
-      businessDetails: {
-        name: 'Fashion Boutique',
-        description: 'Premium Indian fashion and accessories. We specialize in traditional and contemporary designs, offering the best quality products at competitive prices. Our collection includes ethnic wear, fusion wear, and designer accessories.',
-        address: 'Shop No. 45, Phoenix Market City, Kurla West, Mumbai - 400070',
-        phone: '+91 98765 43210',
-        established: '2020',
-        totalSales: 1500000,
-        totalProducts: 45,
-        rating: 4.8,
-        businessHours: '10:00 AM - 9:00 PM',
-        specialties: ['Ethnic Wear', 'Fusion Fashion', 'Designer Accessories'],
-        paymentMethods: ['UPI', 'Cards', 'Cash'],
-        shipping: 'Pan India Delivery'
-      }
+    category: 'Dresses',
+    image: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+    price: 19999,
+    cost: 12000,
+    sale: 16599,
+    discount: 17,
+    stock: 15,
+    sellerId: 2,
+    colors: ['#000000', '#800020', '#4B0082'],
+    sizes: ['XS', 'S', 'M', 'L'],
+    specifications: {
+      'Material': 'Silk Blend',
+      'Care Instructions': 'Dry clean only',
+      'Length': 'Floor Length',
+      'Style': 'A-Line',
+      'Closure': 'Hidden Zipper'
     },
+    reviews: [
+      {
+        id: 1,
+        author: 'Maria Garcia',
+        rating: 4.8,
+        comment: 'Perfect for formal events!',
+        date: '2024-02-12',
+        verified: true,
+      },
+    ],
   },
   {
     id: 3,
     title: 'Casual Maxi Dress',
-    price: 79.99* 83 ,
-    image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=60',
-    description: 'Comfortable and stylish maxi dress for everyday wear',
+    subcategory: 'Summer Dresses',
     category: 'Dresses',
-    subcategory: 'Casual Dresses',
-    seller: {
-      id: 2,
-      name: 'Jane Seller',
-      profilePhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60',
-      rating: 4.8,
-      verified: true,
-      businessDetails: {
-        name: 'Fashion Boutique',
-        description: 'Premium Indian fashion and accessories. We specialize in traditional and contemporary designs, offering the best quality products at competitive prices. Our collection includes ethnic wear, fusion wear, and designer accessories.',
-        address: 'Shop No. 45, Phoenix Market City, Kurla West, Mumbai - 400070',
-        phone: '+91 98765 43210',
-        established: '2020',
-        totalSales: 1500000,
-        totalProducts: 45,
-        rating: 4.8,
-        businessHours: '10:00 AM - 9:00 PM',
-        specialties: ['Ethnic Wear', 'Fusion Fashion', 'Designer Accessories'],
-        paymentMethods: ['UPI', 'Cards', 'Cash'],
-        shipping: 'Pan India Delivery'
-      }
+    image: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+    price: 7999,
+    cost: 4000,
+    sale: 6639,
+    discount: 17,
+    stock: 30,
+    sellerId: 3,
+    colors: ['#FFC0CB', '#FFFFFF', '#FF69B4'],
+    sizes: ['XS', 'S', 'M', 'L', 'XL'],
+    specifications: {
+      'Material': 'Cotton Blend',
+      'Care Instructions': 'Machine wash cold',
+      'Length': 'Maxi',
+      'Style': 'Floral Print',
+      'Pattern': 'Floral'
     },
+    reviews: [
+      {
+        id: 1,
+        author: 'Emma Wilson',
+        rating: 4.5,
+        comment: 'Very comfortable and stylish!',
+        date: '2024-02-08',
+        verified: true,
+      },
+    ],
   },
   {
     id: 4,
     title: 'Cocktail Dress',
-    price: 129.9* 83,
+    price: 129.9 * 83,
     image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=60',
     description: 'Perfect cocktail dress for parties and special events',
     category: 'Dresses',
     subcategory: 'Formal Dresses',
-    seller: {
-      id: 2,
-      name: 'Jane Seller',
-      profilePhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60',
-      rating: 4.8,
-      verified: true,
-      businessDetails: {
-        name: 'Fashion Boutique',
-        description: 'Premium Indian fashion and accessories. We specialize in traditional and contemporary designs, offering the best quality products at competitive prices. Our collection includes ethnic wear, fusion wear, and designer accessories.',
-        address: 'Shop No. 45, Phoenix Market City, Kurla West, Mumbai - 400070',
-        phone: '+91 98765 43210',
-        established: '2020',
-        totalSales: 1500000,
-        totalProducts: 45,
-        rating: 4.8,
-        businessHours: '10:00 AM - 9:00 PM',
-        specialties: ['Ethnic Wear', 'Fusion Fashion', 'Designer Accessories'],
-        paymentMethods: ['UPI', 'Cards', 'Cash'],
-        shipping: 'Pan India Delivery'
-      }
-    },
+    stock: 12,
+    sellerId: 2,
   },
   // Tim's Products (Luxury Accessories)
   {
     id: 5,
-    title: 'Gold Necklace Set',
-    price: 49.99 * 83,
-    image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&auto=format&fit=crop&q=60',
-    description: 'Elegant gold necklace set with matching earrings',
+    title: 'Classic Gold Necklace',
+    price: 3999,
+    image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+    description: 'Elegant gold necklace with delicate chain',
     category: 'Accessories',
     subcategory: 'Jewelry',
-    seller: {
-      id: 3,
-      name: 'Tim David',
-      profilePhoto: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&auto=format&fit=crop&q=60',
-      rating: 4.9,
-      verified: true,
-      businessDetails: {
-        name: 'Luxury Accessories',
-        description: 'Exclusive collection of premium accessories and jewelry. We bring you the finest quality products from around the world, with a special focus on traditional Indian designs and modern luxury.',
-        address: 'Shop No. 12, DLF Mall of India, Sector 18, Noida - 201301',
-        phone: '+91 98765 43211',
-        established: '2019',
-        totalSales: 1200000,
-        totalProducts: 35,
-        rating: 4.9,
-        businessHours: '11:00 AM - 10:00 PM',
-        specialties: ['Luxury Jewelry', 'Designer Bags', 'Premium Accessories'],
-        paymentMethods: ['UPI', 'Cards', 'Cash'],
-        shipping: 'Pan India Delivery'
-      }
+    stock: 15,
+    sellerId: 2,
+    colors: ['#FFD700', '#C0C0C0', '#B87333'],
+    specifications: {
+      'Material': 'Gold',
+      'Length': '18 inches',
+      'Care Instructions': 'Store in jewelry box',
+      'Purity': '18K',
     },
+    reviews: [
+      {
+        id: 1,
+        author: 'Emily Brown',
+        rating: 5,
+        comment: 'Stunning necklace, great quality!',
+        date: '2024-02-10',
+        verified: true,
+      },
+    ],
   },
   {
     id: 6,
     title: 'Leather Crossbody Bag',
-    price: 89.99 * 83,
-    image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800&auto=format&fit=crop&q=60',
-    description: 'Classic leather crossbody bag with adjustable strap',
+    price: 4999,
+    image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+    description: 'Stylish leather bag with adjustable strap',
     category: 'Accessories',
     subcategory: 'Bags',
-    seller: {
-      id: 3,
-      name: 'Tim David',
-      profilePhoto: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&auto=format&fit=crop&q=60',
-      rating: 4.9,
-      verified: true,
-      businessDetails: {
-        name: 'Luxury Accessories',
-        description: 'Exclusive collection of premium accessories and jewelry. We bring you the finest quality products from around the world, with a special focus on traditional Indian designs and modern luxury.',
-        address: 'Shop No. 12, DLF Mall of India, Sector 18, Noida - 201301',
-        phone: '+91 98765 43211',
-        established: '2019',
-        totalSales: 1200000,
-        totalProducts: 35,
-        rating: 4.9,
-        businessHours: '11:00 AM - 10:00 PM',
-        specialties: ['Luxury Jewelry', 'Designer Bags', 'Premium Accessories'],
-        paymentMethods: ['UPI', 'Cards', 'Cash'],
-        shipping: 'Pan India Delivery'
-      }
+    stock: 8,
+    sellerId: 1,
+    colors: ['#8B4513', '#000000', '#A0522D'],
+    specifications: {
+      'Material': 'Genuine Leather',
+      'Dimensions': '8" x 6" x 2"',
+      'Care Instructions': 'Use leather conditioner',
+      'Closure': 'Zipper',
     },
+    reviews: [
+      {
+        id: 1,
+        author: 'Lisa Chen',
+        rating: 4,
+        comment: 'Great quality leather, perfect size!',
+        date: '2024-02-05',
+        verified: true,
+      },
+    ],
   },
   {
     id: 7,
     title: 'Stiletto Heels',
-    price: 129.99 * 83,
-    image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&auto=format&fit=crop&q=60',
-    description: 'Elegant black stiletto heels for formal occasions',
-    category: 'Accessories',
-    subcategory: 'Shoes',
-    seller: {
-      id: 2,
-      name: 'Jane Seller',
-      profilePhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60',
-      rating: 4.8,
-      verified: true,
-      businessDetails: {
-        name: 'Fashion Boutique',
-        description: 'Premium Indian fashion and accessories. We specialize in traditional and contemporary designs, offering the best quality products at competitive prices. Our collection includes ethnic wear, fusion wear, and designer accessories.',
-        address: 'Shop No. 45, Phoenix Market City, Kurla West, Mumbai - 400070',
-        phone: '+91 98765 43210',
-        established: '2020',
-        totalSales: 1500000,
-        totalProducts: 45,
-        rating: 4.8,
-        businessHours: '10:00 AM - 9:00 PM',
-        specialties: ['Ethnic Wear', 'Fusion Fashion', 'Designer Accessories'],
-        paymentMethods: ['UPI', 'Cards', 'Cash'],
-        shipping: 'Pan India Delivery'
-      }
+    subcategory: 'High Heels',
+    category: 'Shoes',
+    image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+    price: 12999,
+    cost: 7000,
+    sale: 10789,
+    discount: 17,
+    stock: 20,
+    sellerId: 1,
+    colors: ['#000000', '#800020', '#4B0082'],
+    sizes: ['36', '38', '40', '42', '44'],
+    specifications: {
+      'Material': 'Genuine Leather',
+      'Care Instructions': 'Wipe with damp cloth',
+      'Heel Height': '4 inches',
+      'Style': 'Classic Stiletto',
+      'Insole': 'Cushioned'
     },
+    reviews: [
+      {
+        id: 1,
+        author: 'Jessica Brown',
+        rating: 4.7,
+        comment: 'Beautiful and comfortable!',
+        date: '2024-02-03',
+        verified: true,
+      },
+    ],
   },
   // Tops
   {
@@ -257,27 +262,8 @@ export const products = [
     description: 'Luxurious silk blouse with delicate floral pattern',
     category: 'Tops',
     subcategory: 'Blouses',
-    seller: {
-      id: 2,
-      name: 'Jane Seller',
-      profilePhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60',
-      rating: 4.8,
-      verified: true,
-      businessDetails: {
-        name: 'Fashion Boutique',
-        description: 'Premium Indian fashion and accessories. We specialize in traditional and contemporary designs, offering the best quality products at competitive prices. Our collection includes ethnic wear, fusion wear, and designer accessories.',
-        address: 'Shop No. 45, Phoenix Market City, Kurla West, Mumbai - 400070',
-        phone: '+91 98765 43210',
-        established: '2020',
-        totalSales: 1500000,
-        totalProducts: 45,
-        rating: 4.8,
-        businessHours: '10:00 AM - 9:00 PM',
-        specialties: ['Ethnic Wear', 'Fusion Fashion', 'Designer Accessories'],
-        paymentMethods: ['UPI', 'Cards', 'Cash'],
-        shipping: 'Pan India Delivery'
-      }
-    },
+    stock: 10,
+    sellerId: 2,
   },
   {
     id: 9,
@@ -287,27 +273,8 @@ export const products = [
     description: 'Trendy graphic t-shirt with unique design',
     category: 'Tops',
     subcategory: 'T-Shirts',
-    seller: {
-      id: 2,
-      name: 'Jane Seller',
-      profilePhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60',
-      rating: 4.8,
-      verified: true,
-      businessDetails: {
-        name: 'Fashion Boutique',
-        description: 'Premium Indian fashion and accessories. We specialize in traditional and contemporary designs, offering the best quality products at competitive prices. Our collection includes ethnic wear, fusion wear, and designer accessories.',
-        address: 'Shop No. 45, Phoenix Market City, Kurla West, Mumbai - 400070',
-        phone: '+91 98765 43210',
-        established: '2020',
-        totalSales: 1500000,
-        totalProducts: 45,
-        rating: 4.8,
-        businessHours: '10:00 AM - 9:00 PM',
-        specialties: ['Ethnic Wear', 'Fusion Fashion', 'Designer Accessories'],
-        paymentMethods: ['UPI', 'Cards', 'Cash'],
-        shipping: 'Pan India Delivery'
-      }
-    },
+    stock: 15,
+    sellerId: 2,
   },
   // Bottoms
   {
@@ -318,27 +285,8 @@ export const products = [
     description: 'Classic high-waist jeans with perfect fit',
     category: 'Bottoms',
     subcategory: 'Jeans',
-    seller: {
-      id: 2,
-      name: 'Jane Seller',
-      profilePhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60',
-      rating: 4.8,
-      verified: true,
-      businessDetails: {
-        name: 'Fashion Boutique',
-        description: 'Premium Indian fashion and accessories. We specialize in traditional and contemporary designs, offering the best quality products at competitive prices. Our collection includes ethnic wear, fusion wear, and designer accessories.',
-        address: 'Shop No. 45, Phoenix Market City, Kurla West, Mumbai - 400070',
-        phone: '+91 98765 43210',
-        established: '2020',
-        totalSales: 1500000,
-        totalProducts: 45,
-        rating: 4.8,
-        businessHours: '10:00 AM - 9:00 PM',
-        specialties: ['Ethnic Wear', 'Fusion Fashion', 'Designer Accessories'],
-        paymentMethods: ['UPI', 'Cards', 'Cash'],
-        shipping: 'Pan India Delivery'
-      }
-    },
+    stock: 10,
+    sellerId: 2,
   },
   {
     id: 11,
@@ -348,27 +296,8 @@ export const products = [
     description: 'Flattering A-line skirt in versatile black',
     category: 'Bottoms',
     subcategory: 'Skirts',
-    seller: {
-      id: 2,
-      name: 'Jane Seller',
-      profilePhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60',
-      rating: 4.8,
-      verified: true,
-      businessDetails: {
-        name: 'Fashion Boutique',
-        description: 'Premium Indian fashion and accessories. We specialize in traditional and contemporary designs, offering the best quality products at competitive prices. Our collection includes ethnic wear, fusion wear, and designer accessories.',
-        address: 'Shop No. 45, Phoenix Market City, Kurla West, Mumbai - 400070',
-        phone: '+91 98765 43210',
-        established: '2020',
-        totalSales: 1500000,
-        totalProducts: 45,
-        rating: 4.8,
-        businessHours: '10:00 AM - 9:00 PM',
-        specialties: ['Ethnic Wear', 'Fusion Fashion', 'Designer Accessories'],
-        paymentMethods: ['UPI', 'Cards', 'Cash'],
-        shipping: 'Pan India Delivery'
-      }
-    },
+    stock: 10,
+    sellerId: 2,
   },
   // Outerwear
   {
@@ -379,57 +308,19 @@ export const products = [
     description: 'Classic leather jacket with modern fit',
     category: 'Outerwear',
     subcategory: 'Jackets',
-    seller: {
-      id: 2,
-      name: 'Jane Seller',
-      profilePhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60',
-      rating: 4.8,
-      verified: true,
-      businessDetails: {
-        name: 'Fashion Boutique',
-        description: 'Premium Indian fashion and accessories. We specialize in traditional and contemporary designs, offering the best quality products at competitive prices. Our collection includes ethnic wear, fusion wear, and designer accessories.',
-        address: 'Shop No. 45, Phoenix Market City, Kurla West, Mumbai - 400070',
-        phone: '+91 98765 43210',
-        established: '2020',
-        totalSales: 1500000,
-        totalProducts: 45,
-        rating: 4.8,
-        businessHours: '10:00 AM - 9:00 PM',
-        specialties: ['Ethnic Wear', 'Fusion Fashion', 'Designer Accessories'],
-        paymentMethods: ['UPI', 'Cards', 'Cash'],
-        shipping: 'Pan India Delivery'
-      }
-    },
+    stock: 10,
+    sellerId: 2,
   },
   {
     id: 13,
     title: 'Wool Coat',
-    price: 249.99* 83 ,
+    price: 249.99 * 83,
     image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&auto=format&fit=crop&q=60',
     description: 'Warm and stylish wool coat for winter',
     category: 'Outerwear',
     subcategory: 'Coats',
-    seller: {
-      id: 2,
-      name: 'Jane Seller',
-      profilePhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60',
-      rating: 4.8,
-      verified: true,
-      businessDetails: {
-        name: 'Fashion Boutique',
-        description: 'Premium Indian fashion and accessories. We specialize in traditional and contemporary designs, offering the best quality products at competitive prices. Our collection includes ethnic wear, fusion wear, and designer accessories.',
-        address: 'Shop No. 45, Phoenix Market City, Kurla West, Mumbai - 400070',
-        phone: '+91 98765 43210',
-        established: '2020',
-        totalSales: 1500000,
-        totalProducts: 45,
-        rating: 4.8,
-        businessHours: '10:00 AM - 9:00 PM',
-        specialties: ['Ethnic Wear', 'Fusion Fashion', 'Designer Accessories'],
-        paymentMethods: ['UPI', 'Cards', 'Cash'],
-        shipping: 'Pan India Delivery'
-      }
-    },
+    stock: 10,
+    sellerId: 2,
   },
   // More Dresses
   {
@@ -440,88 +331,48 @@ export const products = [
     description: 'Flattering wrap dress with adjustable fit',
     category: 'Dresses',
     subcategory: 'Casual Dresses',
-    seller: {
-      id: 2,
-      name: 'Jane Seller',
-      profilePhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60',
-      rating: 4.8,
-      verified: true,
-      businessDetails: {
-        name: 'Fashion Boutique',
-        description: 'Premium Indian fashion and accessories. We specialize in traditional and contemporary designs, offering the best quality products at competitive prices. Our collection includes ethnic wear, fusion wear, and designer accessories.',
-        address: 'Shop No. 45, Phoenix Market City, Kurla West, Mumbai - 400070',
-        phone: '+91 98765 43210',
-        established: '2020',
-        totalSales: 1500000,
-        totalProducts: 45,
-        rating: 4.8,
-        businessHours: '10:00 AM - 9:00 PM',
-        specialties: ['Ethnic Wear', 'Fusion Fashion', 'Designer Accessories'],
-        paymentMethods: ['UPI', 'Cards', 'Cash'],
-        shipping: 'Pan India Delivery'
-      }
-    },
+    stock: 15,
+    sellerId: 2,
   },
   // More Accessories
   {
     id: 15,
-    title: 'Diamond Earrings',
-    price: 299.99 * 83,
-    image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&auto=format&fit=crop&q=60',
-    description: 'Classic diamond stud earrings',
+    title: 'Silk Scarf',
+    price: 1999,
+    image: 'https://images.unsplash.com/photo-1606041008023-472dfb5e530f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+    description: 'Elegant silk scarf with floral pattern',
     category: 'Accessories',
-    subcategory: 'Jewelry',
-    seller: {
-      id: 2,
-      name: 'Jane Seller',
-      profilePhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60',
-      rating: 4.8,
-      verified: true,
-      businessDetails: {
-        name: 'Fashion Boutique',
-        description: 'Premium Indian fashion and accessories. We specialize in traditional and contemporary designs, offering the best quality products at competitive prices. Our collection includes ethnic wear, fusion wear, and designer accessories.',
-        address: 'Shop No. 45, Phoenix Market City, Kurla West, Mumbai - 400070',
-        phone: '+91 98765 43210',
-        established: '2020',
-        totalSales: 1500000,
-        totalProducts: 45,
-        rating: 4.8,
-        businessHours: '10:00 AM - 9:00 PM',
-        specialties: ['Ethnic Wear', 'Fusion Fashion', 'Designer Accessories'],
-        paymentMethods: ['UPI', 'Cards', 'Cash'],
-        shipping: 'Pan India Delivery'
-      }
+    subcategory: 'Scarves',
+    stock: 20,
+    sellerId: 1,
+    colors: ['#FF69B4', '#87CEEB', '#98FB98', '#DDA0DD'],
+    specifications: {
+      'Material': 'Pure Silk',
+      'Dimensions': '180cm x 45cm',
+      'Care Instructions': 'Dry clean only',
+      'Pattern': 'Floral',
     },
+    reviews: [
+      {
+        id: 1,
+        author: 'Sophie Anderson',
+        rating: 5,
+        comment: 'Beautiful scarf, excellent quality!',
+        date: '2024-01-28',
+        verified: true,
+      },
+    ],
   },
   {
     id: 16,
     title: 'Designer Handbag',
-    price: 399.99,
+    price: 399.99 * 83,
     image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800&auto=format&fit=crop&q=60',
     description: 'Luxury designer handbag with gold hardware',
     category: 'Accessories',
     subcategory: 'Bags',
-    seller: {
-      id: 2,
-      name: 'Jane Seller',
-      profilePhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60',
-      rating: 4.8,
-      verified: true,
-      businessDetails: {
-        name: 'Fashion Boutique',
-        description: 'Premium Indian fashion and accessories. We specialize in traditional and contemporary designs, offering the best quality products at competitive prices. Our collection includes ethnic wear, fusion wear, and designer accessories.',
-        address: 'Shop No. 45, Phoenix Market City, Kurla West, Mumbai - 400070',
-        phone: '+91 98765 43210',
-        established: '2020',
-        totalSales: 1500000,
-        totalProducts: 45,
-        rating: 4.8,
-        businessHours: '10:00 AM - 9:00 PM',
-        specialties: ['Ethnic Wear', 'Fusion Fashion', 'Designer Accessories'],
-        paymentMethods: ['UPI', 'Cards', 'Cash'],
-        shipping: 'Pan India Delivery'
-      }
-    },
+    stock: 12,
+    sellerId: 2,
   },
   // More Tops
   {
@@ -532,27 +383,8 @@ export const products = [
     description: 'Soft and warm cashmere sweater',
     category: 'Tops',
     subcategory: 'Sweaters',
-    seller: {
-      id: 2,
-      name: 'Jane Seller',
-      profilePhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60',
-      rating: 4.8,
-      verified: true,
-      businessDetails: {
-        name: 'Fashion Boutique',
-        description: 'Premium Indian fashion and accessories. We specialize in traditional and contemporary designs, offering the best quality products at competitive prices. Our collection includes ethnic wear, fusion wear, and designer accessories.',
-        address: 'Shop No. 45, Phoenix Market City, Kurla West, Mumbai - 400070',
-        phone: '+91 98765 43210',
-        established: '2020',
-        totalSales: 1500000,
-        totalProducts: 45,
-        rating: 4.8,
-        businessHours: '10:00 AM - 9:00 PM',
-        specialties: ['Ethnic Wear', 'Fusion Fashion', 'Designer Accessories'],
-        paymentMethods: ['UPI', 'Cards', 'Cash'],
-        shipping: 'Pan India Delivery'
-      }
-    },
+    stock: 15,
+    sellerId: 2,
   },
   // More Bottoms
   {
@@ -563,27 +395,8 @@ export const products = [
     description: 'Comfortable linen pants for summer',
     category: 'Bottoms',
     subcategory: 'Pants',
-    seller: {
-      id: 2,
-      name: 'Jane Seller',
-      profilePhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60',
-      rating: 4.8,
-      verified: true,
-      businessDetails: {
-        name: 'Fashion Boutique',
-        description: 'Premium Indian fashion and accessories. We specialize in traditional and contemporary designs, offering the best quality products at competitive prices. Our collection includes ethnic wear, fusion wear, and designer accessories.',
-        address: 'Shop No. 45, Phoenix Market City, Kurla West, Mumbai - 400070',
-        phone: '+91 98765 43210',
-        established: '2020',
-        totalSales: 1500000,
-        totalProducts: 45,
-        rating: 4.8,
-        businessHours: '10:00 AM - 9:00 PM',
-        specialties: ['Ethnic Wear', 'Fusion Fashion', 'Designer Accessories'],
-        paymentMethods: ['UPI', 'Cards', 'Cash'],
-        shipping: 'Pan India Delivery'
-      }
-    },
+    stock: 10,
+    sellerId: 2,
   },
   // More Outerwear
   {
@@ -594,57 +407,40 @@ export const products = [
     description: 'Classic blazer for business casual',
     category: 'Outerwear',
     subcategory: 'Blazers',
-    seller: {
-      id: 2,
-      name: 'Jane Seller',
-      profilePhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60',
-      rating: 4.8,
-      verified: true,
-      businessDetails: {
-        name: 'Fashion Boutique',
-        description: 'Premium Indian fashion and accessories. We specialize in traditional and contemporary designs, offering the best quality products at competitive prices. Our collection includes ethnic wear, fusion wear, and designer accessories.',
-        address: 'Shop No. 45, Phoenix Market City, Kurla West, Mumbai - 400070',
-        phone: '+91 98765 43210',
-        established: '2020',
-        totalSales: 1500000,
-        totalProducts: 45,
-        rating: 4.8,
-        businessHours: '10:00 AM - 9:00 PM',
-        specialties: ['Ethnic Wear', 'Fusion Fashion', 'Designer Accessories'],
-        paymentMethods: ['UPI', 'Cards', 'Cash'],
-        shipping: 'Pan India Delivery'
-      }
-    },
+    stock: 10,
+    sellerId: 2,
   },
   {
     id: 20,
     title: 'Cardigan',
-    price: 79.99 * 83 ,
-    image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&auto=format&fit=crop&q=60',
-    description: 'Cozy cardigan for everyday wear',
-    category: 'Outerwear',
-    subcategory: 'Cardigans',
-    seller: {
-      id: 2,
-      name: 'Jane Seller',
-      profilePhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60',
-      rating: 4.8,
-      verified: true,
-      businessDetails: {
-        name: 'Fashion Boutique',
-        description: 'Premium Indian fashion and accessories. We specialize in traditional and contemporary designs, offering the best quality products at competitive prices. Our collection includes ethnic wear, fusion wear, and designer accessories.',
-        address: 'Shop No. 45, Phoenix Market City, Kurla West, Mumbai - 400070',
-        phone: '+91 98765 43210',
-        established: '2020',
-        totalSales: 1500000,
-        totalProducts: 45,
-        rating: 4.8,
-        businessHours: '10:00 AM - 9:00 PM',
-        specialties: ['Ethnic Wear', 'Fusion Fashion', 'Designer Accessories'],
-        paymentMethods: ['UPI', 'Cards', 'Cash'],
-        shipping: 'Pan India Delivery'
-      }
+    subcategory: 'Sweaters',
+    category: 'Knitwear',
+    image: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+    price: 7999,
+    cost: 4000,
+    sale: 6639,
+    discount: 17,
+    stock: 25,
+    sellerId: 2,
+    colors: ['#A52A2A', '#808080', '#8B4513'],
+    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    specifications: {
+      'Material': 'Wool Blend',
+      'Care Instructions': 'Dry clean recommended',
+      'Style': 'Button-up',
+      'Fit': 'Relaxed',
+      'Pattern': 'Solid'
     },
+    reviews: [
+      {
+        id: 1,
+        author: 'David Lee',
+        rating: 4.6,
+        comment: 'Perfect for chilly days!',
+        date: '2024-01-25',
+        verified: true,
+      },
+    ],
   },
 ];
 
@@ -745,130 +541,134 @@ function Products() {
       </Box>
 
       <Grid container spacing={3}>
-        {paginatedProducts.map((product) => (
-          <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
-            <Card
-              sx={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                transition: 'all 0.3s ease-in-out',
-                cursor: 'pointer',
-                border: '1px solid transparent',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: (theme) => theme.shadows[8],
-                  border: '1px solid #000',
-                },
-              }}
-              onClick={() => handleProductClick(product.id)}
-            >
-              <CardMedia
-                component="img"
-                height="200"
-                image={product.image}
-                alt={product.title}
-                sx={{ 
-                  objectFit: 'cover',
-                  transition: 'transform 0.3s ease-in-out',
+        {paginatedProducts.map((product) => {
+          const seller = getSellerById(product.sellerId);
+          return (
+            <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
+              <Card
+                sx={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'all 0.3s ease-in-out',
+                  cursor: 'pointer',
+                  border: '1px solid transparent',
                   '&:hover': {
-                    transform: 'scale(1.05)',
+                    transform: 'translateY(-4px)',
+                    boxShadow: (theme) => theme.shadows[8],
+                    border: '1px solid #000',
                   },
                 }}
-              />
-              <CardContent sx={{ flexGrow: 1 }}>
-                <Box 
+                onClick={() => handleProductClick(product.id)}
+              >
+                <CardMedia
+                  component="img"
+                  height="200"
+                  image={product.image || ''}
+                  alt={product.title || 'Product Image'}
                   sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: 1, 
-                    mb: 1,
-                    cursor: 'pointer',
+                    objectFit: 'cover',
+                    transition: 'transform 0.3s ease-in-out',
                     '&:hover': {
-                      opacity: 0.8,
+                      transform: 'scale(1.05)',
                     },
                   }}
-                  onClick={(e) => handleSellerClick(e, product.seller.id)}
-                >
-                  <Avatar
-                    src={product.seller.profilePhoto}
-                    sx={{ width: 32, height: 32 }}
-                  />
-                  <Box sx={{ flex: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                        {product.seller.name}
-                      </Typography>
-                      {product.seller.verified && (
-                        <VerifiedIcon sx={{ fontSize: 16, color: '#000' }} />
-                      )}
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <Rating value={product.seller.rating} readOnly size="small" precision={0.1} />
-                      <Typography variant="caption" color="text.secondary">
-                        ({product.seller.rating})
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Box>
-
-                <Typography
-                  gutterBottom
-                  variant="h6"
-                  component="h2"
-                  sx={{
-                    fontWeight: 600,
-                    mb: 1,
-                  }}
-                >
-                  {product.title}
-                </Typography>
-                <Typography color="text.secondary" gutterBottom>
-                  {product.category} • {product.subcategory}
-                </Typography>
-                <Typography 
-                  variant="h6" 
-                  sx={{ 
-                    fontWeight: 600,
-                    color: '#000',
-                  }}
-                  gutterBottom
-                >
-                  ₹{product.price.toLocaleString('en-IN')}
-                </Typography>
-                <Typography 
-                  variant="body2" 
-                  color="text.secondary" 
-                  paragraph
-                  sx={{
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
-                  }}
-                >
-                  {product.description}
-                </Typography>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <IconButton
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAddToCart(product);
-                    }}
-                    sx={{
-                      color: '#000',
+                />
+                <CardContent sx={{ flexGrow: 1 }}>
+                  <Box 
+                    sx={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: 1, 
+                      mb: 1,
+                      cursor: 'pointer',
                       '&:hover': {
-                        background: 'rgba(0,0,0,0.05)',
+                        opacity: 0.8,
                       },
                     }}
+                    onClick={(e) => handleSellerClick(e, seller.id)}
                   >
-                    <ShoppingCartIcon />
-                  </IconButton>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
+                    <Avatar
+                      src={seller.profilePhoto || ''}
+                      alt={seller.name}
+                      sx={{ width: 32, height: 32 }}
+                    />
+                    <Box sx={{ flex: 1 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                          {seller.name}
+                        </Typography>
+                        {seller.verified && (
+                          <VerifiedIcon sx={{ fontSize: 16, color: '#000' }} />
+                        )}
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <Rating value={seller.rating || 0} readOnly size="small" precision={0.1} />
+                        <Typography variant="caption" color="text.secondary">
+                          ({seller.rating || 0})
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+
+                  <Typography
+                    gutterBottom
+                    variant="h6"
+                    component="h2"
+                    sx={{
+                      fontWeight: 600,
+                      mb: 1,
+                    }}
+                  >
+                    {product.title || 'Untitled Product'}
+                  </Typography>
+                  <Typography color="text.secondary" gutterBottom>
+                    {product.category} • {product.subcategory}
+                  </Typography>
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      fontWeight: 600,
+                      color: '#000',
+                    }}
+                    gutterBottom
+                  >
+                    ₹{product.price.toLocaleString('en-IN')}
+                  </Typography>
+                  <Typography 
+                    variant="body2" 
+                    color="text.secondary" 
+                    paragraph
+                    sx={{
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    {product.description}
+                  </Typography>
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <IconButton
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToCart(product);
+                      }}
+                      sx={{
+                        color: '#000',
+                        '&:hover': {
+                          background: 'rgba(0,0,0,0.05)',
+                        },
+                      }}
+                    >
+                      <ShoppingCartIcon />
+                    </IconButton>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          );
+        })}
       </Grid>
 
       {totalPages > 1 && (

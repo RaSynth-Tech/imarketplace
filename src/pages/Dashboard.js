@@ -203,7 +203,7 @@ function SellerDashboard() {
             <Typography variant="h4" component="div">
               ₹{stats.totalRevenue.toLocaleString('en-IN')}
             </Typography>
-            <Typography color="text.secondary">Total Revenue</Typography>
+            <Typography color="text.secondary">Total Revenues</Typography>
           </Paper>
         </Grid>
         <Grid item xs={12} md={3}>

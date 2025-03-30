@@ -20,10 +20,10 @@ import Register from './components/Register';
 import Box from '@mui/material/Box';
 import Profile from './pages/Profile';
 import SellerProfile from './pages/SellerProfile';
-import Dashboard from './pages/Dashboard';
+// import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminSellerDashboard from './pages/AdminSellerDashboard';
-import SellerDashboard from './pages/Dashboard';
+import SellerDashboard from './pages/SellerDashboard';
 
 // Initialize Stripe
 const stripePromise = loadStripe('your_publishable_key');
