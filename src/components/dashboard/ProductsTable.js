@@ -50,6 +50,8 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { sellers } from '../../data/sellers';
+import ConfirmationDialog from '../common/ConfirmationDialog';
+import AddProductForm from './AddProductForm';
 
 const ProductsTable = ({ products, onAddProduct, onEditProduct, onDeleteProduct }) => {
   const navigate = useNavigate();
@@ -67,6 +69,9 @@ const ProductsTable = ({ products, onAddProduct, onEditProduct, onDeleteProduct 
   const [editingColors, setEditingColors] = useState(null);
   const [editingSpecs, setEditingSpecs] = useState(null);
   const [productSizes, setProductSizes] = useState({});
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
+  const [showAddForm, setShowAddForm] = useState(false);
 
   // Professional color palette
   const professionalColors = [
@@ -178,7 +183,8 @@ const ProductsTable = ({ products, onAddProduct, onEditProduct, onDeleteProduct 
 
   const handleDeleteClick = (e, productId) => {
     e.stopPropagation();
-    onDeleteProduct(productId);
+    setProductToDelete(productId);
+    setDeleteDialogOpen(true);
   };
 
   const handlePageChange = (event, value) => {
@@ -260,6 +266,47 @@ const ProductsTable = ({ products, onAddProduct, onEditProduct, onDeleteProduct 
   const endIndex = startIndex + rowsPerPage;
   const paginatedProducts = products.slice(startIndex, endIndex);
 
+  const handleProductNameClick = (e, product) => {
+    e.stopPropagation();
+    handleRowClick(product);
+  };
+
+  const handleAccordionClick = (e, productId) => {
+    e.stopPropagation();
+    setExpandedProduct(expandedProduct === productId ? null : productId);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (productToDelete) {
+      onDeleteProduct(productToDelete);
+      setDeleteDialogOpen(false);
+      setProductToDelete(null);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setProductToDelete(null);
+  };
+
+  const productToDeleteData = productToDelete ? products.find(p => p.id === productToDelete) : null;
+
+  const handleAddProduct = (productData) => {
+    // Generate a new ID for the product
+    const newProduct = {
+      ...productData,
+      id: Math.max(...products.map(p => p.id), 0) + 1,
+      createdAt: new Date().toISOString(),
+      sales: 0,
+      reviews: [],
+    };
+    onAddProduct(newProduct);
+  };
+
+  const handleAddClick = () => {
+    setShowAddForm(true);
+  };
+
   return (
     <Paper 
       sx={{ 
@@ -292,7 +339,7 @@ const ProductsTable = ({ products, onAddProduct, onEditProduct, onDeleteProduct 
         <Button
           variant="contained"
           startIcon={<AddIcon sx={{ opacity: 0.8, color: '#000000' }} />}
-          onClick={onAddProduct}
+          onClick={handleAddClick}
           sx={{
             bgcolor: 'primary.main',
             '&:hover': {
@@ -327,12 +374,10 @@ const ProductsTable = ({ products, onAddProduct, onEditProduct, onDeleteProduct 
                   <TableRow
                     hover
                     sx={{
-                      cursor: 'pointer',
                       '&:hover': {
                         backgroundColor: 'rgba(0, 0, 0, 0.04)',
                       },
                     }}
-                    onClick={() => handleRowClick(product)}
                   >
                     <TableCell>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -351,7 +396,18 @@ const ProductsTable = ({ products, onAddProduct, onEditProduct, onDeleteProduct 
                           variant="rounded"
                         />
                         <Box>
-                          <Typography sx={{ fontWeight: 500 }}>{product.title}</Typography>
+                          <Typography 
+                            sx={{ 
+                              fontWeight: 500,
+                              cursor: 'pointer',
+                              '&:hover': {
+                                textDecoration: 'underline',
+                              },
+                            }}
+                            onClick={(e) => handleProductNameClick(e, product)}
+                          >
+                            {product.title}
+                          </Typography>
                           <Typography variant="body2" color="text.secondary">
                             {product.subcategory}
                           </Typography>
@@ -384,6 +440,8 @@ const ProductsTable = ({ products, onAddProduct, onEditProduct, onDeleteProduct 
                             size="small"
                             sx={{
                               ml: 1,
+                              marginLeft:0,
+                              marginTop:'10px',
                               bgcolor: '#000000',
                               color: '#ffffff',
                               '&:hover': {
@@ -443,10 +501,7 @@ const ProductsTable = ({ products, onAddProduct, onEditProduct, onDeleteProduct 
                           <DeleteIcon />
                         </IconButton>
                         <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setExpandedProduct(expandedProduct === product.id ? null : product.id);
-                          }}
+                          onClick={(e) => handleAccordionClick(e, product.id)}
                           sx={{
                             color: '#000000',
                             opacity: 0.8,
@@ -472,13 +527,13 @@ const ProductsTable = ({ products, onAddProduct, onEditProduct, onDeleteProduct 
                     <TableCell colSpan={6} sx={{ py: 0, px: 0 }}>
                       <Accordion 
                         expanded={expandedProduct === product.id}
+                        onChange={(e) => handleAccordionClick(e, product.id)}
                         sx={{ 
                           boxShadow: 'none',
                           '&:before': { display: 'none' },
                           backgroundColor: 'rgba(0, 0, 0, 0.02)',
                           borderRadius: '8px',
                           overflow: 'hidden',
-                          // border: '1px solid',
                           borderColor: 'divider',
                           width: '100%',
                           '&.Mui-expanded': {
@@ -1117,6 +1172,25 @@ const ProductsTable = ({ products, onAddProduct, onEditProduct, onDeleteProduct 
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Add the ConfirmationDialog */}
+      <ConfirmationDialog
+        open={deleteDialogOpen}
+        title="Delete Product"
+        message={`Are you sure you want to delete "${productToDeleteData?.title}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        severity="error"
+      />
+
+      {/* Add the AddProductForm */}
+      <AddProductForm
+        open={showAddForm}
+        onClose={() => setShowAddForm(false)}
+        onSubmit={handleAddProduct}
+      />
     </Paper>
   );
 };
