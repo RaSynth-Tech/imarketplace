@@ -159,7 +159,56 @@ function Navbar({ isDarkMode, toggleTheme }) {
                     sx={{ width: 32, height: 32 }}
                   />
                 </IconButton>
-                <IconButton
+                
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                >
+                  <MenuItem onClick={handleProfile}>
+                    <PersonIcon sx={{ mr: 1 }} />
+                    Profile
+                  </MenuItem>
+                  <MenuItem onClick={handleLogout}>
+                    <LogoutIcon sx={{ mr: 1 }} />
+                    Logout
+                  </MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <>
+                <Button
+                  color="inherit"
+                  onClick={() => navigate('/login')}
+                  sx={{ 
+                    mr: 2,
+                    color: isDarkMode ? '#fff' : '#000',
+                    '&:hover': {
+                      bgcolor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+                    },
+                  }}
+                >
+                  Login
+                </Button>
+                <Button
+                  variant="outlined"
+                  onClick={() => navigate('/register')}
+                  sx={{ 
+                    mr: 2,
+                    borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.3)' : '#000',
+                    color: isDarkMode ? '#fff' : '#000',
+                    '&:hover': {
+                      borderColor: isDarkMode ? '#fff' : '#000',
+                      bgcolor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+                    },
+                  }}
+                >
+                  Register as Seller
+                </Button>
+              </>
+            )}
+          </Box>
+          <IconButton
                   color="inherit"
                   onClick={handleCartMenu}
                   sx={{ 
@@ -241,54 +290,6 @@ function Navbar({ isDarkMode, toggleTheme }) {
                     </>
                   )}
                 </Menu>
-                <Menu
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={handleClose}
-                >
-                  <MenuItem onClick={handleProfile}>
-                    <PersonIcon sx={{ mr: 1 }} />
-                    Profile
-                  </MenuItem>
-                  <MenuItem onClick={handleLogout}>
-                    <LogoutIcon sx={{ mr: 1 }} />
-                    Logout
-                  </MenuItem>
-                </Menu>
-              </>
-            ) : (
-              <>
-                <Button
-                  color="inherit"
-                  onClick={() => navigate('/login')}
-                  sx={{ 
-                    mr: 2,
-                    color: isDarkMode ? '#fff' : '#000',
-                    '&:hover': {
-                      bgcolor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
-                    },
-                  }}
-                >
-                  Login
-                </Button>
-                <Button
-                  variant="outlined"
-                  onClick={() => navigate('/register')}
-                  sx={{ 
-                    mr: 2,
-                    borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.3)' : '#000',
-                    color: isDarkMode ? '#fff' : '#000',
-                    '&:hover': {
-                      borderColor: isDarkMode ? '#fff' : '#000',
-                      bgcolor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
-                    },
-                  }}
-                >
-                  Register as Seller
-                </Button>
-              </>
-            )}
-          </Box>
           <IconButton 
             color="inherit" 
             onClick={toggleTheme}

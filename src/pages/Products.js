@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Container,
@@ -28,6 +28,7 @@ import Avatar from '@mui/material/Avatar';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import Rating from '@mui/material/Rating';
 import { sellers } from '../data/sellers';
+import FloatingHomeButton from '../components/common/FloatingHomeButton';
 
 const categories = {
   'Dresses': ['Summer Dresses', 'Evening Dresses', 'Casual Dresses', 'Formal Dresses'],
@@ -62,7 +63,13 @@ export const products = [
     title: 'Classic White Shirt',
     subcategory: 'Casual Shirts',
     category: 'Shirts',
+    images: [
+      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1583744946564-b52ac1c389c8?w=800&auto=format&fit=crop&q=60',
+    ],
     image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+    description: 'A timeless classic white shirt made from premium cotton, perfect for both formal and casual occasions. Features a classic point collar and button cuffs.',
     price: 1999,
     cost: 1200,
     sale: 1599,
@@ -94,13 +101,19 @@ export const products = [
     title: 'Elegant Evening Gown',
     subcategory: 'Evening Dresses',
     category: 'Dresses',
+    images: [
+      'https://images.unsplash.com/photo-1515377905703-c4788e51af15?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1612336307429-8a898d10e223?w=800&auto=format&fit=crop&q=60',
+    ],
     image: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+    description: 'A stunning floor-length evening gown made from luxurious silk blend fabric. Features an A-line silhouette with a hidden zipper closure, perfect for formal events and special occasions.',
     price: 19999,
     cost: 12000,
     sale: 16599,
     discount: 17,
     stock: 15,
-    sellerId: 2,
+    sellerId: 1,
     colors: ['#000000', '#800020', '#4B0082'],
     sizes: ['XS', 'S', 'M', 'L'],
     specifications: {
@@ -126,13 +139,19 @@ export const products = [
     title: 'Casual Maxi Dress',
     subcategory: 'Summer Dresses',
     category: 'Dresses',
-    image: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+    images: [
+      'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1612336307429-8a898d10e223?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1515377905703-c4788e51af15?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+    ],
+    image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=60',
+    description: 'A beautiful floral print maxi dress made from comfortable cotton blend fabric. Perfect for summer days and casual outings, featuring a relaxed fit and flowing silhouette.',
     price: 7999,
     cost: 4000,
     sale: 6639,
     discount: 17,
     stock: 30,
-    sellerId: 3,
+    sellerId: 1,
     colors: ['#FFC0CB', '#FFFFFF', '#FF69B4'],
     sizes: ['XS', 'S', 'M', 'L', 'XL'],
     specifications: {
@@ -157,20 +176,30 @@ export const products = [
     id: 4,
     title: 'Cocktail Dress',
     price: 129.9 * 83,
-    image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=60',
-    description: 'Perfect cocktail dress for parties and special events',
+    images: [
+      'https://images.unsplash.com/photo-1612336307429-8a898d10e223?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1515377905703-c4788e51af15?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+    ],
+    image: 'https://images.unsplash.com/photo-1612336307429-8a898d10e223?w=800&auto=format&fit=crop&q=60',
+    description: 'An elegant cocktail dress perfect for parties and special events. Features a flattering silhouette with a fitted bodice and flowing skirt, made from high-quality fabric.',
     category: 'Dresses',
     subcategory: 'Formal Dresses',
     stock: 12,
-    sellerId: 2,
+    sellerId: 1,
   },
   // Tim's Products (Luxury Accessories)
   {
     id: 5,
     title: 'Classic Gold Necklace',
     price: 3999,
+    images: [
+      'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+      'https://images.unsplash.com/photo-1606041008023-472dfb5e530f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+      'https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+    ],
     image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
-    description: 'Elegant gold necklace with delicate chain',
+    description: 'An elegant gold necklace with a delicate chain, perfect for adding a touch of sophistication to any outfit. Made from 18K gold with a classic design that never goes out of style.',
     category: 'Accessories',
     subcategory: 'Jewelry',
     stock: 15,
@@ -197,12 +226,17 @@ export const products = [
     id: 6,
     title: 'Leather Crossbody Bag',
     price: 4999,
+    images: [
+      'https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+      'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+      'https://images.unsplash.com/photo-1606041008023-472dfb5e530f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+    ],
     image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
-    description: 'Stylish leather bag with adjustable strap',
+    description: 'A stylish leather crossbody bag with an adjustable strap, perfect for everyday use. Made from genuine leather with a zipper closure and multiple compartments for organization.',
     category: 'Accessories',
     subcategory: 'Bags',
     stock: 8,
-    sellerId: 1,
+    sellerId: 2,
     colors: ['#8B4513', '#000000', '#A0522D'],
     specifications: {
       'Material': 'Genuine Leather',
@@ -226,13 +260,19 @@ export const products = [
     title: 'Stiletto Heels',
     subcategory: 'High Heels',
     category: 'Shoes',
+    images: [
+      'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      'https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+      'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+    ],
     image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+    description: 'Elegant stiletto heels made from genuine leather with a cushioned insole for comfort. Features a classic 4-inch heel height and a timeless design that pairs well with any outfit.',
     price: 12999,
     cost: 7000,
     sale: 10789,
     discount: 17,
     stock: 20,
-    sellerId: 1,
+    sellerId: 2,
     colors: ['#000000', '#800020', '#4B0082'],
     sizes: ['36', '38', '40', '42', '44'],
     specifications: {
@@ -258,8 +298,13 @@ export const products = [
     id: 8,
     title: 'Silk Blouse',
     price: 69.99 * 83,
+    images: [
+      'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1583744946564-b52ac1c389c8?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+    ],
     image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&auto=format&fit=crop&q=60',
-    description: 'Luxurious silk blouse with delicate floral pattern',
+    description: 'A luxurious silk blouse with a delicate floral pattern, perfect for both professional and casual settings. Features a classic fit with a button-down front and elegant detailing.',
     category: 'Tops',
     subcategory: 'Blouses',
     stock: 10,
@@ -269,8 +314,13 @@ export const products = [
     id: 9,
     title: 'Graphic T-Shirt',
     price: 29.99 * 83,
+    images: [
+      'https://images.unsplash.com/photo-1583744946564-b52ac1c389c8?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&auto=format&fit=crop&q=60',
+    ],
     image: 'https://images.unsplash.com/photo-1583744946564-b52ac1c389c8?w=800&auto=format&fit=crop&q=60',
-    description: 'Trendy graphic t-shirt with unique design',
+    description: 'A trendy graphic t-shirt featuring a unique design, made from soft and comfortable cotton. Perfect for casual wear and expressing your personal style.',
     category: 'Tops',
     subcategory: 'T-Shirts',
     stock: 15,
@@ -281,8 +331,13 @@ export const products = [
     id: 10,
     title: 'High-Waist Jeans',
     price: 79.99 * 83,
+    images: [
+      'https://images.unsplash.com/photo-1542272604-787c3835535d?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1542272604-787c3835535d?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1542272604-787c3835535d?w=800&auto=format&fit=crop&q=60',
+    ],
     image: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=800&auto=format&fit=crop&q=60',
-    description: 'Classic high-waist jeans with perfect fit',
+    description: 'Classic high-waist jeans with a perfect fit, made from premium denim. Features a flattering silhouette and comfortable stretch for all-day wear.',
     category: 'Bottoms',
     subcategory: 'Jeans',
     stock: 10,
@@ -292,8 +347,13 @@ export const products = [
     id: 11,
     title: 'A-Line Skirt',
     price: 59.99 * 83,
+    images: [
+      'https://images.unsplash.com/photo-1591369822096-ffd140ec948f?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1591369822096-ffd140ec948f?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1591369822096-ffd140ec948f?w=800&auto=format&fit=crop&q=60',
+    ],
     image: 'https://images.unsplash.com/photo-1591369822096-ffd140ec948f?w=800&auto=format&fit=crop&q=60',
-    description: 'Flattering A-line skirt in versatile black',
+    description: 'A flattering A-line skirt in versatile black, perfect for both casual and formal occasions. Features a comfortable fit and a classic silhouette that never goes out of style.',
     category: 'Bottoms',
     subcategory: 'Skirts',
     stock: 10,
@@ -304,8 +364,13 @@ export const products = [
     id: 12,
     title: 'Leather Jacket',
     price: 199.99 * 83,
+    images: [
+      'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&auto=format&fit=crop&q=60',
+    ],
     image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&auto=format&fit=crop&q=60',
-    description: 'Classic leather jacket with modern fit',
+    description: 'A classic leather jacket with a modern fit, made from genuine leather. Features a timeless design with a comfortable lining and multiple pockets for functionality.',
     category: 'Outerwear',
     subcategory: 'Jackets',
     stock: 10,
@@ -315,8 +380,13 @@ export const products = [
     id: 13,
     title: 'Wool Coat',
     price: 249.99 * 83,
+    images: [
+      'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&auto=format&fit=crop&q=60',
+    ],
     image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&auto=format&fit=crop&q=60',
-    description: 'Warm and stylish wool coat for winter',
+    description: 'A warm and stylish wool coat perfect for winter. Features a classic design with a comfortable lining and multiple pockets for functionality.',
     category: 'Outerwear',
     subcategory: 'Coats',
     stock: 10,
@@ -327,8 +397,13 @@ export const products = [
     id: 14,
     title: 'Wrap Dress',
     price: 89.99 * 83,
+    images: [
+      'https://images.unsplash.com/photo-1612336307429-8a898d10e223?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1612336307429-8a898d10e223?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1612336307429-8a898d10e223?w=800&auto=format&fit=crop&q=60',
+    ],
     image: 'https://images.unsplash.com/photo-1612336307429-8a898d10e223?w=800&auto=format&fit=crop&q=60',
-    description: 'Flattering wrap dress with adjustable fit',
+    description: 'A flattering wrap dress with an adjustable fit, perfect for both casual and formal occasions. Features a comfortable silhouette and elegant detailing.',
     category: 'Dresses',
     subcategory: 'Casual Dresses',
     stock: 15,
@@ -339,8 +414,13 @@ export const products = [
     id: 15,
     title: 'Silk Scarf',
     price: 1999,
+    images: [
+      'https://images.unsplash.com/photo-1606041008023-472dfb5e530f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+      'https://images.unsplash.com/photo-1606041008023-472dfb5e530f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+      'https://images.unsplash.com/photo-1606041008023-472dfb5e530f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+    ],
     image: 'https://images.unsplash.com/photo-1606041008023-472dfb5e530f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
-    description: 'Elegant silk scarf with floral pattern',
+    description: 'An elegant silk scarf with a beautiful floral pattern, perfect for adding a touch of sophistication to any outfit. Made from pure silk with a soft and luxurious feel.',
     category: 'Accessories',
     subcategory: 'Scarves',
     stock: 20,
@@ -367,8 +447,13 @@ export const products = [
     id: 16,
     title: 'Designer Handbag',
     price: 399.99 * 83,
+    images: [
+      'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800&auto=format&fit=crop&q=60',
+    ],
     image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800&auto=format&fit=crop&q=60',
-    description: 'Luxury designer handbag with gold hardware',
+    description: 'A luxury designer handbag with gold hardware, made from premium materials. Features multiple compartments for organization and a timeless design that never goes out of style.',
     category: 'Accessories',
     subcategory: 'Bags',
     stock: 12,
@@ -379,8 +464,13 @@ export const products = [
     id: 17,
     title: 'Cashmere Sweater',
     price: 159.99 * 83,
+    images: [
+      'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&auto=format&fit=crop&q=60',
+    ],
     image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&auto=format&fit=crop&q=60',
-    description: 'Soft and warm cashmere sweater',
+    description: 'A soft and warm cashmere sweater, perfect for cold weather. Features a comfortable fit and a classic design that pairs well with any outfit.',
     category: 'Tops',
     subcategory: 'Sweaters',
     stock: 15,
@@ -391,8 +481,13 @@ export const products = [
     id: 18,
     title: 'Linen Pants',
     price: 89.99 * 83,
+    images: [
+      'https://images.unsplash.com/photo-1542272604-787c3835535d?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1542272604-787c3835535d?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1542272604-787c3835535d?w=800&auto=format&fit=crop&q=60',
+    ],
     image: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=800&auto=format&fit=crop&q=60',
-    description: 'Comfortable linen pants for summer',
+    description: 'Comfortable linen pants perfect for summer, featuring a relaxed fit and breathable fabric. Ideal for casual outings and warm weather.',
     category: 'Bottoms',
     subcategory: 'Pants',
     stock: 10,
@@ -403,8 +498,13 @@ export const products = [
     id: 19,
     title: 'Blazer',
     price: 129.99 * 83,
+    images: [
+      'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&auto=format&fit=crop&q=60',
+    ],
     image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&auto=format&fit=crop&q=60',
-    description: 'Classic blazer for business casual',
+    description: 'A classic blazer perfect for business casual settings, featuring a tailored fit and premium materials. Versatile enough to pair with both formal and casual outfits.',
     category: 'Outerwear',
     subcategory: 'Blazers',
     stock: 10,
@@ -415,7 +515,13 @@ export const products = [
     title: 'Cardigan',
     subcategory: 'Sweaters',
     category: 'Knitwear',
+    images: [
+      'https://images.unsplash.com/photo-1515377905703-c4788e51af15?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      'https://images.unsplash.com/photo-1515377905703-c4788e51af15?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      'https://images.unsplash.com/photo-1515377905703-c4788e51af15?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+    ],
     image: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+    description: 'A comfortable wool blend cardigan with a button-up front, perfect for layering. Features a relaxed fit and solid pattern, ideal for casual wear.',
     price: 7999,
     cost: 4000,
     sale: 6639,
@@ -451,10 +557,12 @@ function Products() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubcategory, setSelectedSubcategory] = useState('');
-  const [page, setPage] = useState(1);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '' });
+  const [displayedProducts, setDisplayedProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const itemsPerPage = 12;
 
+  // Filter products based on search and category
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = !selectedCategory || product.category === selectedCategory;
@@ -462,14 +570,32 @@ function Products() {
     return matchesSearch && matchesCategory && matchesSubcategory;
   });
 
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const paginatedProducts = filteredProducts.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage
-  );
+  // Load initial products
+  useEffect(() => {
+    const initialProducts = filteredProducts.slice(0, itemsPerPage);
+    setDisplayedProducts(initialProducts);
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory, selectedSubcategory]);
 
-  const handleProductClick = (productId) => {
-    navigate(`/products/${productId}`);
+  const handleLoadMore = () => {
+    const nextPage = currentPage + 1;
+    const startIndex = 0;
+    const endIndex = nextPage * itemsPerPage;
+    const newProducts = filteredProducts.slice(startIndex, endIndex);
+    setDisplayedProducts(newProducts);
+    setCurrentPage(nextPage);
+  };
+
+  const hasMoreProducts = displayedProducts.length < filteredProducts.length;
+
+  const handleProductClick = (product) => {
+    const seller = getSellerById(product.sellerId);
+    const completeProduct = {
+      ...product,
+      seller: seller,
+      images: product.images || [product.image],
+    };
+    navigate(`/products/${product.id}`, { state: { product: completeProduct } });
   };
 
   const handleSellerClick = (e, sellerId) => {
@@ -482,6 +608,7 @@ function Products() {
     setSnackbar({
       open: true,
       message: `${product.title} added to cart`,
+      severity: 'success'
     });
   };
 
@@ -490,7 +617,9 @@ function Products() {
   };
 
   return (
-    <Box sx={{ p: 4 }}>
+    <Container maxWidth="xl" sx={{ py: 4 }}>
+      <FloatingHomeButton />
+      
       <Typography variant="h4" component="h1" gutterBottom>
         Products
       </Typography>
@@ -540,11 +669,11 @@ function Products() {
         )}
       </Box>
 
-      <Grid container spacing={3}>
-        {paginatedProducts.map((product) => {
+      <Grid container spacing={4}>
+        {displayedProducts.map((product) => {
           const seller = getSellerById(product.sellerId);
           return (
-            <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
+            <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
               <Card
                 sx={{
                   height: '100%',
@@ -559,7 +688,7 @@ function Products() {
                     border: '1px solid #000',
                   },
                 }}
-                onClick={() => handleProductClick(product.id)}
+                onClick={() => handleProductClick(product)}
               >
                 <CardMedia
                   component="img"
@@ -649,20 +778,16 @@ function Products() {
                     {product.description}
                   </Typography>
                   <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <IconButton
+                    <Button
+                      variant="outlined"
+                      endIcon={<ShoppingCartIcon />}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleAddToCart(product);
                       }}
-                      sx={{
-                        color: '#000',
-                        '&:hover': {
-                          background: 'rgba(0,0,0,0.05)',
-                        },
-                      }}
                     >
-                      <ShoppingCartIcon />
-                    </IconButton>
+                      Add to Cart
+                    </Button>
                   </Box>
                 </CardContent>
               </Card>
@@ -671,17 +796,33 @@ function Products() {
         })}
       </Grid>
 
-      {totalPages > 1 && (
+      {hasMoreProducts && (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-          <Stack spacing={2}>
-            <Pagination
-              count={totalPages}
-              page={page}
-              onChange={(e, value) => setPage(value)}
-              color="primary"
-              size="large"
-            />
-          </Stack>
+          <Button
+            variant="contained"
+            onClick={handleLoadMore}
+            sx={{
+              backgroundColor: '#000',
+              color: '#fff',
+              '&:hover': {
+                backgroundColor: '#333',
+              },
+              py: 1.5,
+              px: 4,
+              borderRadius: 2,
+              textTransform: 'none',
+              fontSize: '1rem',
+              fontWeight: 600,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+              transition: 'all 0.3s ease-in-out',
+              '&:hover': {
+                transform: 'translateY(-2px)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+              },
+            }}
+          >
+            Load More
+          </Button>
         </Box>
       )}
 
@@ -690,11 +831,11 @@ function Products() {
         autoHideDuration={3000}
         onClose={handleCloseSnackbar}
       >
-        <Alert onClose={handleCloseSnackbar} severity="success">
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
           {snackbar.message}
         </Alert>
       </Snackbar>
-    </Box>
+    </Container>
   );
 }
 

@@ -8,7 +8,7 @@ import { CartProvider } from './context/CartContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import FloatingHomeButton from './components/FloatingHomeButton';
+import FloatingHomeButton from './components/common/FloatingHomeButton';
 import Home from './pages/Home';
 import Products from './pages/Products';
 import Cart from './pages/Cart';

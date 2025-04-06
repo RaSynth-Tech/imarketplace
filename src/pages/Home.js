@@ -177,7 +177,7 @@ function Home() {
                   </Typography>
                   <Typography
                     variant="h6"
-                    color="primary"
+                    color="black"
                     gutterBottom
                     sx={{ fontWeight: 600 }}
                   >
@@ -199,7 +199,96 @@ function Home() {
                   <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <Button
                       variant="outlined"
-                      startIcon={<ShoppingCartIcon />}
+                      endIcon={<ShoppingCartIcon />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToCart(product);
+                      }}
+                    >
+                      Add to Cart
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+      <Container maxWidth="lg" sx={{ pb: 8 }}>
+        <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4, fontWeight: 600 }}>
+          Trending Products
+        </Typography>
+        <Grid container spacing={4}>
+          {featuredProducts.map((product) => (
+            <Grid item key={product.id} xs={12} sm={6} md={4}>
+              <Card
+                sx={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'all 0.3s ease-in-out',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: theme.shadows[8],
+                    border: `1px solid ${theme.palette.primary.main}`,
+                  },
+                }}
+                onClick={() => handleProductClick(product.id)}
+              >
+                <CardMedia
+                  component="img"
+                  height="200"
+                  image={product.image}
+                  alt={product.title}
+                  sx={{
+                    objectFit: 'cover',
+                    transition: 'transform 0.3s ease-in-out',
+                    '&:hover': {
+                      transform: 'scale(1.05)',
+                    },
+                  }}
+                />
+                <CardContent sx={{ flexGrow: 1 }}>
+                  <Typography
+                    gutterBottom
+                    variant="h6"
+                    component="h3"
+                    sx={{
+                      fontWeight: 600,
+                      mb: 1,
+                    }}
+                  >
+                    {product.title}
+                  </Typography>
+                  <Typography color="text.secondary" gutterBottom>
+                    {product.category} • {product.subcategory}
+                  </Typography>
+                  <Typography
+                    variant="h6"
+                    color="black"
+                    gutterBottom
+                    sx={{ fontWeight: 600 }}
+                  >
+                    ₹{product.price.toLocaleString('en-IN')}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    paragraph
+                    sx={{
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    {product.description}
+                  </Typography>
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <Button
+                      variant="outlined"
+                      endIcon={<ShoppingCartIcon />}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleAddToCart(product);

@@ -42,6 +42,9 @@ import {
   Favorite as FavoriteIcon,
   Share as ShareIcon,
 } from '@mui/icons-material';
+import ImageCarousel from '../components/common/ImageCarousel';
+import { products } from './Products';
+import { sellers } from '../data/sellers';
 
 function ProductDetails() {
   const { id } = useParams();
@@ -52,17 +55,9 @@ function ProductDetails() {
   const [quantity, setQuantity] = useState(1);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
   const [tabValue, setTabValue] = useState(0);
-  const [selectedImage, setSelectedImage] = useState('');
 
-  // Get product from navigation state
-  const product = location.state?.product;
-
-  // Set initial selected image
-  React.useEffect(() => {
-    if (product?.image) {
-      setSelectedImage(product.image);
-    }
-  }, [product?.image]);
+  // Get product from navigation state or find it in products array
+  const product = location.state?.product || products.find(p => p.id === parseInt(id));
 
   if (!product) {
     return (
@@ -107,37 +102,11 @@ function ProductDetails() {
               bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)',
             }}
           >
-            <Box
-              component="img"
-              src={selectedImage}
-              alt={product.title}
-              sx={{
-                width: '100%',
-                height: 'auto',
-                borderRadius: 1,
-                mb: 2,
-              }}
+            <ImageCarousel 
+              images={product.images || [product.image]} 
+              autoSlide={true}
+              showThumbnails={true}
             />
-            <Grid container spacing={1}>
-              <Grid item xs={3}>
-                <Box
-                  component="img"
-                  src={product.image}
-                  alt={product.title}
-                  sx={{
-                    width: '100%',
-                    height: 'auto',
-                    borderRadius: 1,
-                    cursor: 'pointer',
-                    border: selectedImage === product.image ? `2px solid ${theme.palette.primary.main}` : 'none',
-                    '&:hover': {
-                      opacity: 0.8,
-                    },
-                  }}
-                  onClick={() => setSelectedImage(product.image)}
-                />
-              </Grid>
-            </Grid>
           </Paper>
         </Grid>
 
