@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Container,
@@ -29,6 +29,7 @@ import VerifiedIcon from '@mui/icons-material/Verified';
 import Rating from '@mui/material/Rating';
 import { sellers } from '../data/sellers';
 import FloatingHomeButton from '../components/common/FloatingHomeButton';
+import AddToCartButton from '../components/common/AddToCartButton';
 
 const categories = {
   'Dresses': ['Summer Dresses', 'Evening Dresses', 'Casual Dresses', 'Formal Dresses'],
@@ -550,19 +551,17 @@ export const products = [
   },
 ];
 
-function Products() {
-  const { addToCart } = useCart();
+const Products = () => {
+  const { cart, addToCart, decrementQuantity, updateQuantity } = useCart();
   const navigate = useNavigate();
   const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubcategory, setSelectedSubcategory] = useState('');
-  const [displayedProducts, setDisplayedProducts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [page, setPage] = useState(1);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const itemsPerPage = 12;
 
-  // Filter products based on search and category
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = !selectedCategory || product.category === selectedCategory;
@@ -570,23 +569,11 @@ function Products() {
     return matchesSearch && matchesCategory && matchesSubcategory;
   });
 
-  // Load initial products
-  useEffect(() => {
-    const initialProducts = filteredProducts.slice(0, itemsPerPage);
-    setDisplayedProducts(initialProducts);
-    setCurrentPage(1);
-  }, [searchQuery, selectedCategory, selectedSubcategory]);
-
-  const handleLoadMore = () => {
-    const nextPage = currentPage + 1;
-    const startIndex = 0;
-    const endIndex = nextPage * itemsPerPage;
-    const newProducts = filteredProducts.slice(startIndex, endIndex);
-    setDisplayedProducts(newProducts);
-    setCurrentPage(nextPage);
-  };
-
-  const hasMoreProducts = displayedProducts.length < filteredProducts.length;
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginatedProducts = filteredProducts.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage
+  );
 
   const handleProductClick = (product) => {
     const seller = getSellerById(product.sellerId);
@@ -603,13 +590,19 @@ function Products() {
     navigate(`/seller/${sellerId}`);
   };
 
-  const handleAddToCart = (product) => {
-    addToCart(product);
-    setSnackbar({
-      open: true,
-      message: `${product.title} added to cart`,
-      severity: 'success'
-    });
+  const handleAddToCart = (product, quantity) => {
+    addToCart(product, quantity);
+    setSnackbar({ open: true, message: 'Item added to cart', severity: 'success' });
+  };
+
+  const handleDecrementQuantity = (productId) => {
+    decrementQuantity(productId);
+    setSnackbar({ open: true, message: 'Item quantity updated', severity: 'success' });
+  };
+
+  const handleUpdateQuantity = (productId, quantity) => {
+    updateQuantity(productId, quantity);
+    setSnackbar({ open: true, message: 'Item quantity updated', severity: 'success' });
   };
 
   const handleCloseSnackbar = () => {
@@ -670,7 +663,7 @@ function Products() {
       </Box>
 
       <Grid container spacing={4}>
-        {displayedProducts.map((product) => {
+        {paginatedProducts.map((product) => {
           const seller = getSellerById(product.sellerId);
           return (
             <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
@@ -778,16 +771,12 @@ function Products() {
                     {product.description}
                   </Typography>
                   <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <Button
-                      variant="outlined"
-                      endIcon={<ShoppingCartIcon />}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleAddToCart(product);
-                      }}
-                    >
-                      Add to Cart
-                    </Button>
+                    <AddToCartButton
+                      product={product}
+                      onAddToCart={handleAddToCart}
+                      onDecrementQuantity={handleDecrementQuantity}
+                      onUpdateQuantity={handleUpdateQuantity}
+                    />
                   </Box>
                 </CardContent>
               </Card>
@@ -796,33 +785,17 @@ function Products() {
         })}
       </Grid>
 
-      {hasMoreProducts && (
+      {totalPages > 1 && (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-          <Button
-            variant="contained"
-            onClick={handleLoadMore}
-            sx={{
-              backgroundColor: '#000',
-              color: '#fff',
-              '&:hover': {
-                backgroundColor: '#333',
-              },
-              py: 1.5,
-              px: 4,
-              borderRadius: 2,
-              textTransform: 'none',
-              fontSize: '1rem',
-              fontWeight: 600,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-              transition: 'all 0.3s ease-in-out',
-              '&:hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-              },
-            }}
-          >
-            Load More
-          </Button>
+          <Stack spacing={2}>
+            <Pagination
+              count={totalPages}
+              page={page}
+              onChange={(e, value) => setPage(value)}
+              color="primary"
+              size="large"
+            />
+          </Stack>
         </Box>
       )}
 

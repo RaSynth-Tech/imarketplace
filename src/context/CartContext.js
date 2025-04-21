@@ -27,11 +27,21 @@ const cartReducer = (state, action) => {
         cartItems: state.cartItems.filter(item => item.id !== action.payload),
       };
 
+    case 'DECREMENT_QUANTITY':
+      return {
+        ...state,
+        cartItems: state.cartItems.map(item =>
+          item.id === action.payload
+            ? { ...item, quantity: Math.max(0, item.quantity - 1) }
+            : item
+        ).filter(item => item.quantity > 0),
+      };
+
     case 'UPDATE_QUANTITY':
       return {
         ...state,
         cartItems: state.cartItems.map(item =>
-          item.id === action.payload.id
+          item.id === action.payload.productId
             ? { ...item, quantity: action.payload.quantity }
             : item
         ),
@@ -61,8 +71,12 @@ export function CartProvider({ children }) {
     dispatch({ type: 'REMOVE_FROM_CART', payload: productId });
   };
 
+  const decrementQuantity = (productId) => {
+    dispatch({ type: 'DECREMENT_QUANTITY', payload: productId });
+  };
+
   const updateQuantity = (productId, quantity) => {
-    dispatch({ type: 'UPDATE_QUANTITY', payload: { id: productId, quantity } });
+    dispatch({ type: 'UPDATE_QUANTITY', payload: { productId, quantity } });
   };
 
   const clearCart = () => {
@@ -79,6 +93,7 @@ export function CartProvider({ children }) {
         cartItems: state.cartItems,
         addToCart,
         removeFromCart,
+        decrementQuantity,
         updateQuantity,
         clearCart,
         getTotal,
@@ -95,4 +110,4 @@ export function useCart() {
     throw new Error('useCart must be used within a CartProvider');
   }
   return context;
-} 
+}
