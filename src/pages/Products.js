@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Container,
@@ -19,17 +19,17 @@ import {
   Snackbar,
   Alert,
   IconButton,
-  useTheme,
   Chip,
+  Avatar,
+  Rating,
 } from '@mui/material';
 import { useCart } from '../context/CartContext';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import Avatar from '@mui/material/Avatar';
 import VerifiedIcon from '@mui/icons-material/Verified';
-import Rating from '@mui/material/Rating';
-import { sellers } from '../data/sellers';
 import FloatingHomeButton from '../components/common/FloatingHomeButton';
 import AddToCartButton from '../components/common/AddToCartButton';
+import { sellers } from '../data/sellers';
+import { ThemeContext } from '../App';
 
 const categories = {
   'Dresses': ['Summer Dresses', 'Evening Dresses', 'Casual Dresses', 'Formal Dresses'],
@@ -77,6 +77,7 @@ export const products = [
     discount: 20,
     stock: 25,
     sellerId: 1,
+    seller: getSellerById(1),
     colors: ['#000000', '#FFFFFF', '#4169E1'],
     sizes: ['S', 'M', 'L', 'XL'],
     specifications: {
@@ -115,6 +116,7 @@ export const products = [
     discount: 17,
     stock: 15,
     sellerId: 1,
+    seller: getSellerById(1),
     colors: ['#000000', '#800020', '#4B0082'],
     sizes: ['XS', 'S', 'M', 'L'],
     specifications: {
@@ -153,6 +155,7 @@ export const products = [
     discount: 17,
     stock: 30,
     sellerId: 1,
+    seller: getSellerById(1),
     colors: ['#FFC0CB', '#FFFFFF', '#FF69B4'],
     sizes: ['XS', 'S', 'M', 'L', 'XL'],
     specifications: {
@@ -188,6 +191,7 @@ export const products = [
     subcategory: 'Formal Dresses',
     stock: 12,
     sellerId: 1,
+    seller: getSellerById(1),
   },
   // Tim's Products (Luxury Accessories)
   {
@@ -205,6 +209,7 @@ export const products = [
     subcategory: 'Jewelry',
     stock: 15,
     sellerId: 2,
+    seller: getSellerById(2),
     colors: ['#FFD700', '#C0C0C0', '#B87333'],
     specifications: {
       'Material': 'Gold',
@@ -238,6 +243,7 @@ export const products = [
     subcategory: 'Bags',
     stock: 8,
     sellerId: 2,
+    seller: getSellerById(2),
     colors: ['#8B4513', '#000000', '#A0522D'],
     specifications: {
       'Material': 'Genuine Leather',
@@ -274,6 +280,7 @@ export const products = [
     discount: 17,
     stock: 20,
     sellerId: 2,
+    seller: getSellerById(2),
     colors: ['#000000', '#800020', '#4B0082'],
     sizes: ['36', '38', '40', '42', '44'],
     specifications: {
@@ -310,6 +317,7 @@ export const products = [
     subcategory: 'Blouses',
     stock: 10,
     sellerId: 2,
+    seller: getSellerById(2),
   },
   {
     id: 9,
@@ -326,6 +334,7 @@ export const products = [
     subcategory: 'T-Shirts',
     stock: 15,
     sellerId: 2,
+    seller: getSellerById(2),
   },
   // Bottoms
   {
@@ -343,6 +352,7 @@ export const products = [
     subcategory: 'Jeans',
     stock: 10,
     sellerId: 2,
+    seller: getSellerById(2),
   },
   {
     id: 11,
@@ -359,6 +369,7 @@ export const products = [
     subcategory: 'Skirts',
     stock: 10,
     sellerId: 2,
+    seller: getSellerById(2),
   },
   // Outerwear
   {
@@ -376,6 +387,7 @@ export const products = [
     subcategory: 'Jackets',
     stock: 10,
     sellerId: 2,
+    seller: getSellerById(2),
   },
   {
     id: 13,
@@ -392,6 +404,7 @@ export const products = [
     subcategory: 'Coats',
     stock: 10,
     sellerId: 2,
+    seller: getSellerById(2),
   },
   // More Dresses
   {
@@ -409,6 +422,7 @@ export const products = [
     subcategory: 'Casual Dresses',
     stock: 15,
     sellerId: 2,
+    seller: getSellerById(2),
   },
   // More Accessories
   {
@@ -426,6 +440,7 @@ export const products = [
     subcategory: 'Scarves',
     stock: 20,
     sellerId: 1,
+    seller: getSellerById(1),
     colors: ['#FF69B4', '#87CEEB', '#98FB98', '#DDA0DD'],
     specifications: {
       'Material': 'Pure Silk',
@@ -459,6 +474,7 @@ export const products = [
     subcategory: 'Bags',
     stock: 12,
     sellerId: 2,
+    seller: getSellerById(2),
   },
   // More Tops
   {
@@ -476,6 +492,7 @@ export const products = [
     subcategory: 'Sweaters',
     stock: 15,
     sellerId: 2,
+    seller: getSellerById(2),
   },
   // More Bottoms
   {
@@ -493,6 +510,7 @@ export const products = [
     subcategory: 'Pants',
     stock: 10,
     sellerId: 2,
+    seller: getSellerById(2),
   },
   // More Outerwear
   {
@@ -510,6 +528,7 @@ export const products = [
     subcategory: 'Blazers',
     stock: 10,
     sellerId: 2,
+    seller: getSellerById(2),
   },
   {
     id: 20,
@@ -529,6 +548,7 @@ export const products = [
     discount: 17,
     stock: 25,
     sellerId: 2,
+    seller: getSellerById(2),
     colors: ['#A52A2A', '#808080', '#8B4513'],
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     specifications: {
@@ -551,10 +571,267 @@ export const products = [
   },
 ];
 
+const ProductCard = ({ product, onAddToCart }) => {
+  const { mode } = useContext(ThemeContext);
+  const isDarkMode = mode === 'dark';
+  const navigate = useNavigate();
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleProductClick = () => {
+    navigate(`/products/${product.id}`, { state: { product } });
+  };
+
+  return (
+    <Card
+      elevation={0}
+      sx={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        borderRadius: 2,
+        overflow: 'hidden',
+        transition: 'all 0.3s ease-in-out',
+        bgcolor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)',
+        border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'}`,
+        '&:hover': {
+          transform: 'translateY(-4px)',
+          boxShadow: isDarkMode 
+            ? '0 8px 24px rgba(0,0,0,0.3)' 
+            : '0 8px 24px rgba(0,0,0,0.1)',
+        },
+      }}
+    >
+      <Box
+        sx={{
+          position: 'relative',
+          paddingTop: '100%',
+          cursor: 'pointer',
+          overflow: 'hidden',
+        }}
+        onClick={handleProductClick}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <CardMedia
+          component="img"
+          image={product.image}
+          alt={product.title}
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            transition: 'transform 0.3s ease-in-out',
+            transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+          }}
+        />
+        {product.discount && (
+          <Chip
+            label={`${product.discount}% OFF`}
+            color="error"
+            size="small"
+            sx={{
+              position: 'absolute',
+              top: 12,
+              right: 12,
+              fontWeight: 600,
+              bgcolor: 'rgba(255,0,0,0.85)',
+              color: '#fff',
+              backdropFilter: 'blur(4px)',
+              '& .MuiChip-label': {
+                padding: '0 8px',
+              }
+            }}
+          />
+        )}
+      </Box>
+      <CardContent sx={{ flexGrow: 1, p: 2.5 }}>
+        <Box sx={{ mb: 1.5 }}>
+          <Typography
+            variant="subtitle1"
+            component="h3"
+            sx={{
+              fontWeight: 600,
+              mb: 0.5,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              letterSpacing: 0.2,
+              lineHeight: 1.3,
+            }}
+          >
+            {product.title}
+          </Typography>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{
+              mb: 1.5,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              lineHeight: 1.4,
+            }}
+          >
+            {product.description}
+          </Typography>
+        </Box>
+
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+          <Rating
+            value={product.rating || 0}
+            precision={0.5}
+            readOnly
+            size="small"
+            sx={{
+              '& .MuiRating-iconFilled': {
+                color: isDarkMode ? '#FFD700' : '#FFB400',
+              }
+            }}
+          />
+          <Typography variant="body2" color="text.secondary">
+            ({product.reviews?.length || 0})
+          </Typography>
+        </Box>
+
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 700,
+              color: isDarkMode ? '#fff' : '#000',
+              letterSpacing: 0.3,
+            }}
+          >
+            ₹{product.price.toLocaleString('en-IN')}
+          </Typography>
+          {product.sale && (
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ textDecoration: 'line-through' }}
+            >
+              ₹{product.price.toLocaleString('en-IN')}
+            </Typography>
+          )}
+          {product.discount && (
+            <Typography
+              variant="body2"
+              sx={{ 
+                color: isDarkMode ? '#FF6B6B' : '#D32F2F',
+                fontWeight: 600,
+                ml: 'auto'
+              }}
+            >
+              Save {product.discount}%
+            </Typography>
+          )}
+        </Box>
+
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 1, 
+          mb: 2,
+          p: 1,
+          borderRadius: 1,
+          bgcolor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)'
+        }}>
+          <Avatar
+            src={product.seller?.profilePhoto}
+            sx={{ width: 24, height: 24 }}
+          />
+          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+            {product.seller?.name || 'Unknown Seller'}
+          </Typography>
+          {product.seller?.verified && (
+            <VerifiedIcon 
+              sx={{ 
+                fontSize: 16, 
+                color: isDarkMode ? '#4FC3F7' : '#2196F3',
+                ml: 0.5
+              }} 
+            />
+          )}
+        </Box>
+
+        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
+          {product.colors?.map((color, index) => (
+            <Box
+              key={index}
+              sx={{
+                width: 20,
+                height: 20,
+                borderRadius: '50%',
+                bgcolor: color,
+                border: '1px solid rgba(0,0,0,0.1)',
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  transform: 'scale(1.1)',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                }
+              }}
+            />
+          ))}
+          {product.sizes?.map((size, index) => (
+            <Chip
+              key={index}
+              label={size}
+              size="small"
+              sx={{
+                bgcolor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+                color: isDarkMode ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.8)',
+                fontWeight: 500,
+                '&:hover': {
+                  bgcolor: isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.08)',
+                },
+              }}
+            />
+          ))}
+        </Box>
+
+        <Box sx={{ mt: 2 }}>
+          <AddToCartButton
+            product={product}
+            onAddToCart={onAddToCart}
+            sx={{
+              width: '100%',
+              py: 1,
+              borderRadius: 2,
+              fontWeight: 600,
+              textTransform: 'none',
+              letterSpacing: 0.5,
+              boxShadow: 'none',
+              background: isDarkMode 
+                ? 'linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.15) 100%)' 
+                : 'linear-gradient(90deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.08) 100%)',
+              color: isDarkMode ? '#fff' : '#000',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                boxShadow: isDarkMode ? '0 4px 12px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.1)',
+                background: isDarkMode 
+                ? 'linear-gradient(90deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.2) 100%)' 
+                : 'linear-gradient(90deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.12) 100%)',
+              },
+            }}
+          />
+        </Box>
+      </CardContent>
+    </Card>
+  );
+};
+
 const Products = () => {
   const { cart, addToCart, decrementQuantity, updateQuantity } = useCart();
   const navigate = useNavigate();
-  const theme = useTheme();
+  const { mode } = useContext(ThemeContext);
+  const isDarkMode = mode === 'dark';
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubcategory, setSelectedSubcategory] = useState('');
@@ -667,119 +944,10 @@ const Products = () => {
           const seller = getSellerById(product.sellerId);
           return (
             <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
-              <Card
-                sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  transition: 'all 0.3s ease-in-out',
-                  cursor: 'pointer',
-                  border: '1px solid transparent',
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                    boxShadow: (theme) => theme.shadows[8],
-                    border: '1px solid #000',
-                  },
-                }}
-                onClick={() => handleProductClick(product)}
-              >
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={product.image || ''}
-                  alt={product.title || 'Product Image'}
-                  sx={{ 
-                    objectFit: 'cover',
-                    transition: 'transform 0.3s ease-in-out',
-                    '&:hover': {
-                      transform: 'scale(1.05)',
-                    },
-                  }}
-                />
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Box 
-                    sx={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: 1, 
-                      mb: 1,
-                      cursor: 'pointer',
-                      '&:hover': {
-                        opacity: 0.8,
-                      },
-                    }}
-                    onClick={(e) => handleSellerClick(e, seller.id)}
-                  >
-                    <Avatar
-                      src={seller.profilePhoto || ''}
-                      alt={seller.name}
-                      sx={{ width: 32, height: 32 }}
-                    />
-                    <Box sx={{ flex: 1 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                          {seller.name}
-                        </Typography>
-                        {seller.verified && (
-                          <VerifiedIcon sx={{ fontSize: 16, color: '#000' }} />
-                        )}
-                      </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        <Rating value={seller.rating || 0} readOnly size="small" precision={0.1} />
-                        <Typography variant="caption" color="text.secondary">
-                          ({seller.rating || 0})
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Box>
-
-                  <Typography
-                    gutterBottom
-                    variant="h6"
-                    component="h2"
-                    sx={{
-                      fontWeight: 600,
-                      mb: 1,
-                    }}
-                  >
-                    {product.title || 'Untitled Product'}
-                  </Typography>
-                  <Typography color="text.secondary" gutterBottom>
-                    {product.category} • {product.subcategory}
-                  </Typography>
-                  <Typography 
-                    variant="h6" 
-                    sx={{ 
-                      fontWeight: 600,
-                      color: '#000',
-                    }}
-                    gutterBottom
-                  >
-                    ₹{product.price.toLocaleString('en-IN')}
-                  </Typography>
-                  <Typography 
-                    variant="body2" 
-                    color="text.secondary" 
-                    paragraph
-                    sx={{
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden',
-                    }}
-                  >
-                    {product.description}
-                  </Typography>
-                  <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <AddToCartButton
-                      product={product}
-                      onAddToCart={handleAddToCart}
-                      onDecrementQuantity={handleDecrementQuantity}
-                      onUpdateQuantity={handleUpdateQuantity}
-                    />
-                  </Box>
-                </CardContent>
-              </Card>
+              <ProductCard
+                product={product}
+                onAddToCart={handleAddToCart}
+              />
             </Grid>
           );
         })}
